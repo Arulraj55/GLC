@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop Products</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 80px;
+      background: #f9f9f9;
+    }
+
+    h2 {
+      margin: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 240px);
+      justify-content: center;
+      gap: 30px 50px;
+      padding: 30px;
+    }
+
+    .product-card {
+      width: 240px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-info h4 {
+      margin: 6px 0;
+      font-size: 16px;
+    }
+
+    .product-info p {
+      margin: 4px 0;
+      color: #555;
+      font-size: 14px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+
+    footer a button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    footer a button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>12 Products from Alimentation Generale</h2>
+  <div class="product-grid">
+    <!-- Repeat this for all 12 products of the shop -->
+    <div class="product-card">
+      <img src="carrot.jpg" alt="Carrot" />
+      <div class="product-info">
+        <h4>Carrot</h4>
+        <p>₹40 per kg</p>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="tomato.jpg" alt="Tomato" />
+      <div class="product-info">
+        <h4>Tomato</h4>
+        <p>₹30 per kg</p>
+      </div>
+    </div>
+
+    <!-- Continue for other 10 products -->
+  </div>
+
+  <footer>
+    <a href="index1.html"><button>Home</button></a>
+    <a href="shop.html"><button>Grocery Shop</button></a>
+    <a href="products.html"><button>Products</button></a>
+    <a href="search.html"><button>Search</button></a>
+  </footer>
+
+</body>
+</html>

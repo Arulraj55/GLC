@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 80px;
+      background: #f9f9f9;
+    }
+
+    .search-container {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .search-container input {
+      width: 80%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .results {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      width: 180px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .card p {
+      padding: 10px;
+      margin: 0;
+      font-weight: bold;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+
+    footer a button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    footer a button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search for a product or shop..." oninput="filterResults()" />
+  </div>
+
+  <div class="results" id="resultsContainer">
+    <!-- Filtered cards will appear here -->
+  </div>
+
+  <footer>
+    <a href="index1.html"><button>Home</button></a>
+    <a href="shop.html"><button>Grocery Shop</button></a>
+    <a href="products.html"><button>Products</button></a>
+    <a href="search.html"><button>Search</button></a>
+  </footer>
+
+  <script>
+    const data = [
+      // Products
+      { type: 'product', name: 'Carrot', img: 'product1.jpg' },
+      { type: 'product', name: 'Tomato', img: 'product2.jpg' },
+      { type: 'product', name: 'Potato', img: 'product3.jpg' },
+      { type: 'product', name: 'Corn', img: 'product4.jpg' },
+      { type: 'product', name: 'Cucumber', img: 'product5.jpg' },
+      { type: 'product', name: 'Onion', img: 'product6.jpg' },
+      { type: 'product', name: 'Garlic', img: 'product7.jpg' },
+      { type: 'product', name: 'Lettuce', img: 'product8.jpg' },
+      { type: 'product', name: 'Bell Pepper', img: 'product9.jpg' },
+      { type: 'product', name: 'Broccoli', img: 'product10.jpg' },
+      { type: 'product', name: 'Eggplant', img: 'product11.jpg' },
+      { type: 'product', name: 'Green Pepper', img: 'product12.jpg' },
+      { type: 'product', name: 'Spinach', img: 'product13.jpg' },
+      { type: 'product', name: 'Beetroot', img: 'product14.jpg' },
+      { type: 'product', name: 'Coriander', img: 'product15.jpg' },
+      { type: 'product', name: 'Cabbage', img: 'product16.jpg' },
+
+      // Shops
+      { type: 'shop', name: 'Alimentation Generale', img: 'shop1.jpg' },
+      { type: 'shop', name: 'Organic Fresh', img: 'shop2.jpg' },
+      { type: 'shop', name: 'Health & Happiness', img: 'shop3.jpg' },
+      { type: 'shop', name: 'Freshest and Finest', img: 'shop4.jpg' },
+      { type: 'shop', name: 'Fresh & Ready', img: 'shop5.jpg' },
+      { type: 'shop', name: 'Beverages', img: 'shop6.jpg' },
+      { type: 'shop', name: 'Organic Produce', img: 'shop7.jpg' },
+      { type: 'shop', name: 'Fresh Foods', img: 'shop8.jpg' }
+    ];
+
+    function filterResults() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = '';
+
+      if (!input.trim()) return;
+
+      const filtered = data.filter(item => item.name.toLowerCase().includes(input));
+      
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<img src="${item.img}" alt="${item.name}"><p>${item.name}</p>`;
+        container.appendChild(card);
+      });
+    }
+  </script>
+
+</body>
+</html>
