@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'vendor/autoload.php';
+require 'https://glc-hjb2.onrender.com/vendor/autoload.php';
 
 $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
 $client = new MongoDB\Client($uri);
@@ -22,7 +22,6 @@ if (empty($username) || empty($password) || empty($email) || empty($phone) || em
 
 // Check if username already exists
 $userExists = $userCollection->findOne(['username' => $username]);
-
 if ($userExists) {
     echo "Sign up failed. Try a different username.";
     exit;

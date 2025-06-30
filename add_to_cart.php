@@ -1,5 +1,5 @@
 <?php
-require 'db_connect.php'; // Connect to MongoDB
+require 'https://glc-hjb2.onrender.com/db_connect.php'; // Connect to MongoDB
 
 $data = json_decode(file_get_contents("php://input"), true);
 

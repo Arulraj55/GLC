@@ -18,7 +18,7 @@
 <body>
 
   <!-- Cart button -->
-  <button class="cart-button" onclick="window.location.href='cart_view.php'">Cart</button>
+  <button class="cart-button" onclick="window.location.href='https://glc-hjb2.onrender.com/cart_view.php'">Cart</button>
 
   <!-- Product name dynamically inserted -->
   <h2>Shops selling <span id="productName"></span></h2>
@@ -84,7 +84,7 @@
         return;
       }
 
-      fetch('add_to_cart1.php', {
+      fetch('https://glc-hjb2.onrender.com/add_to_cart1.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({

@@ -1,44 +1,24 @@
 <?php
 session_start();
-require 'vendor/autoload.php';
+require 'https://glc-hjb2.onrender.com/vendor/autoload.php';
 
 $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
 $client = new MongoDB\Client($uri);
 $collection = $client->greenlink->farmers;
 
-// Getting form data
+// Get login form data
 $username = trim($_POST['username']);
-$email = $_POST['email'];
-$password = $_POST['password']; // NO hashing
-$phone = $_POST['phone'];
-$address = $_POST['address'];
+$password = $_POST['password'];
 
-// Check if user already exists
-$existingUser = $collection->findOne(['username' => $username]);
-if ($existingUser) {
-    echo "<script>alert('Username already exists. Please choose another.'); window.location.href='signup.html';</script>";
+// Find user by username and password (plain text)
+$user = $collection->findOne(['username' => $username, 'password' => $password]);
+
+if (!$user) {
+    echo "<script>alert('Invalid username or password.'); window.location.href='signin.html';</script>";
     exit();
 }
 
-// Insert new user
-$products = [];
-for ($i = 1; $i <= 16; $i++) {
-    $products[] = [
-        'name' => "Product $i",
-        'image' => "product$i.jpg"
-    ];
-}
-
-$collection->insertOne([
-    'username' => $username,
-    'email' => $email,
-    'password' => $password, // Stored directly without hashing
-    'phone' => $phone,
-    'address' => $address,
-    'products' => $products
-]);
-
 $_SESSION['username'] = $username;
-header("Location: dashboard.php");
+header("Location: https://glc-hjb2.onrender.com/dashboard.php");
 exit();
 ?>

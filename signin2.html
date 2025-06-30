@@ -25,7 +25,7 @@
       const formData = new FormData(loginForm);
       const username = formData.get("username");
 
-      fetch("signin2.php", {
+      fetch("https://glc-hjb2.onrender.com/signin2.php", {
         method: "POST",
         body: formData
       })

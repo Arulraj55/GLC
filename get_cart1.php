@@ -50,7 +50,7 @@ foreach ($items as $item) {
       <strong>{$item['product']}</strong><br/>
       ₹{$item['price']} - <em>{$item['shop']}</em>
     </div>
-    <a href='remove_from_cart1.php?id={$item['_id']}&username=$username' class='remove-btn'>Remove</a>
+    <a href='https://glc-hjb2.onrender.com/remove_from_cart1.php?id={$item['_id']}&username=$username' class='remove-btn'>Remove</a>
   </div>";
   $total += $item['price'];
 }

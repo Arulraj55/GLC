@@ -147,7 +147,7 @@
   function addToCart(product, farmer, image) {
   const price = 40;
 
-  fetch('add_to_cart.php', {
+  fetch('https://glc-hjb2.onrender.com/add_to_cart.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ product, farmer, price, image })

@@ -1,5 +1,5 @@
 <?php
-require 'db_connect.php';
+require 'https://glc-hjb2.onrender.com/db_connect.php';
 $data = json_decode(file_get_contents("php://input"), true);
 $product = $data['product'] ?? '';
 $farmer = $data['farmer'] ?? '';

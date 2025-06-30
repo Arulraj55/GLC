@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'vendor/autoload.php';
+require 'https://glc-hjb2.onrender.com/vendor/autoload.php';
 
 $username = $_SESSION['username'] ?? '';
 
@@ -149,7 +149,7 @@ foreach ($cartItems as $item) {
   echo '<h3>' . $item['product'] . '</h3>';
   echo '<p>Shop: ' . $item['shop'] . '</p>';
   echo '<p>Price: ₹' . $item['price'] . '</p>';
-  echo '<form method="POST" action="remove_from_cart1.php">';
+  echo '<form method="POST" action="https://glc-hjb2.onrender.com/remove_from_cart1.php">';
   echo '<input type="hidden" name="username" value="' . $username . '">';
   echo '<input type="hidden" name="product" value="' . $item['product'] . '">';
   echo '<input type="hidden" name="shop" value="' . $item['shop'] . '">';
@@ -162,7 +162,7 @@ foreach ($cartItems as $item) {
 
 <?php if ($hasItems): ?>
   <div class="total">Total: ₹<?php echo $total; ?></div>
-  <a class="checkout-btn" href="checkout.php">Proceed to Checkout</a>
+  <a class="checkout-btn" href="https://glc-hjb2.onrender.com/checkout.php">Proceed to Checkout</a>
 <?php else: ?>
   <div class="total">Your cart is empty.</div>
 <?php endif; ?>

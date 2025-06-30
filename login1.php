@@ -152,7 +152,7 @@ $username = $_SESSION['username']; // Optional: use this to personalize if neede
                 <h2>Shop Owner</h2>
                 <p>Update store stock. Set best prices. Manage inventory. Track daily sales. List fresh products. Receive farmer orders. 
                     Grow business fast. Offer great deals. Improve shop reach. Boost customer trust.</p>
-                <a href="shop_dashboard.php" class="btn">Update Now</a>
+                <a href="https://glc-hjb2.onrender.com/shop_dashboard.php" class="btn">Update Now</a>
             </div>
         </div>
     </div>

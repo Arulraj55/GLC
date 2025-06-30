@@ -1,6 +1,6 @@
 <?php
 // Require the Composer autoload file to use MongoDB\Client
-require 'vendor/autoload.php'; // Make sure this path is correct for your project
+require 'https://glc-hjb2.onrender.com/vendor/autoload.php'; // Make sure this path is correct for your project
 
 // Connect to the MongoDB server
 $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";

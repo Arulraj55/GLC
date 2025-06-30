@@ -3,7 +3,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $productName = $_POST["product"];
 
     // Connect to MongoDB
-    require 'vendor/autoload.php'; // if you installed MongoDB extension with Composer
+    require 'https://glc-hjb2.onrender.com/vendor/autoload.php'; // if you installed MongoDB extension with Composer
     $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
     $client = new MongoDB\Client($uri);
 

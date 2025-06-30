@@ -84,7 +84,7 @@
 </head>
 <body>
 
-  <button class="cart-button-top" onclick="window.location.href='cart_view.php'">Cart</button>
+  <button class="cart-button-top" onclick="window.location.href='https://glc-hjb2.onrender.com/cart_view.php'">Cart</button>
 
   <h2 id="shopTitle">Products in this Shop</h2>
 <div id="message" class="message"></div>
@@ -139,7 +139,7 @@ function addToCart(product, shop, image, price) {
     return;
   }
 
-  fetch('add_to_cart1.php', {
+  fetch('https://glc-hjb2.onrender.com/add_to_cart1.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'

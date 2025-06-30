@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'vendor/autoload.php';
+require 'https://glc-hjb2.onrender.com/vendor/autoload.php';
 
 $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
 $client = new MongoDB\Client($uri);
@@ -31,7 +31,7 @@ $updateResult = $cartCollection->updateOne(
 );
 
 if ($updateResult->getModifiedCount() > 0) {
-    header("Location: cart_view.php"); // After removing, redirect to cart again
+    header("Location: https://glc-hjb2.onrender.com/cart_view.php"); // After removing, redirect to cart again
     exit;
 } else {
     echo "Failed to remove item.";

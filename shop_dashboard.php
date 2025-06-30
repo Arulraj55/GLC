@@ -86,7 +86,7 @@ document.querySelectorAll('.product').forEach(product => {
     product.addEventListener('click', () => {
         const name = product.getAttribute('data-name');
 
-        fetch('get_price.php', {
+        fetch('https://glc-hjb2.onrender.com/get_price.php', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',

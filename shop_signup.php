@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Connect to MongoDB
-    require 'vendor/autoload.php'; // make sure composer dependencies are installed
+    require 'https://glc-hjb2.onrender.com/vendor/autoload.php'; // make sure composer dependencies are installed
     $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
     $client = new MongoDB\Client($uri);
     $collection = $client->green_link->shop_owners;
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Store session and redirect
     $_SESSION['username'] = $username;
-    header("Location: login1.php");
+    header("Location: https://glc-hjb2.onrender.com/login1.php");
     exit();
 }
 ?>

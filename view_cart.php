@@ -32,7 +32,7 @@
   <div id="cartContainer"></div>
 
   <script>
-    fetch('get_cart.php') // Fetch cart data from the backend
+    fetch('https://glc-hjb2.onrender.com/get_cart.php') // Fetch cart data from the backend
       .then(response => response.json())
       .then(data => {
         const container = document.getElementById('cartContainer');
