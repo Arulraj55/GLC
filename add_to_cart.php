@@ -10,22 +10,22 @@ $price = $data['price'] ?? '';
 if ($product && $farmer) {
     // Map correct images based on product name
     $productImageMapping = [
-        'Carrot' => 'product1.jpg',
-        'Tomato' => 'product2.jpg',
-        'Potato' => 'product3.jpg',
-        'Corn' => 'product4.jpg',
-        'Cucumber' => 'product5.jpg',
-        'Onion' => 'product6.jpg',
-        'Garlic' => 'product7.jpg',
-        'Lettuce' => 'product8.jpg',
-        'Bell Pepper' => 'product9.jpg',
-        'Broccoli' => 'product10.jpg',
-        'Eggplant' => 'product11.jpg',
-        'Green Pepper' => 'product12.jpg',
-        'Spinach' => 'product13.jpg',
-        'Beetroot' => 'product14.jpg',
-        'Coriander' => 'product15.jpg',
-        'Cabbage' => 'product16.jpg'
+        'Carrot' => 'frontend/product1.jpg',
+        'Tomato' => 'frontend/product2.jpg',
+        'Potato' => 'frontend/product3.jpg',
+        'Corn' => 'frontend/product4.jpg',
+        'Cucumber' => 'frontend/product5.jpg',
+        'Onion' => 'frontend/product6.jpg',
+        'Garlic' => 'frontend/product7.jpg',
+        'Lettuce' => 'frontend/product8.jpg',
+        'Bell Pepper' => 'frontend/product9.jpg',
+        'Broccoli' => 'frontend/product10.jpg',
+        'Eggplant' => 'frontend/product11.jpg',
+        'Green Pepper' => 'frontend/product12.jpg',
+        'Spinach' => 'frontend/product13.jpg',
+        'Beetroot' => 'frontend/product14.jpg',
+        'Coriander' => 'frontend/product15.jpg',
+        'Cabbage' => 'frontend/product16.jpg'
     ];
 
     $image = $productImageMapping[$product] ?? 'default.jpg';

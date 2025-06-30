@@ -25,7 +25,7 @@ $products = [];
 for ($i = 1; $i <= 16; $i++) {
     $products[] = [
         'name' => "Product $i",
-        'image' => "product$i.jpg"
+        'image' => "frontend/product$i.jpg"
     ];
 }
 

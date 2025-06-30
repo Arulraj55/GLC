@@ -29,7 +29,7 @@ $username = $_SESSION['username']; // Optional: use this to personalize if neede
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: url("frontend/GLC6.jpg") no-repeat center center/cover;
+            background: url("GLC6.jpg") no-repeat center center/cover;
             color: white;
             position: relative;
         }

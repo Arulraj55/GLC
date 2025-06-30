@@ -70,7 +70,7 @@ $products = [
 <div class="grid">
   <?php
     foreach ($products as $index => $product) {
-        $img = "product" . ($index + 1) . ".jpg";
+        $img = "frontend/product" . ($index + 1) . ".jpg";
         echo "<div class='product' data-name='$product'>
                 <img src='$img' alt='$product'>
                 <p>$product</p>
