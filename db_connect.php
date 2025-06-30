@@ -1,5 +1,5 @@
 <?php
-require 'https://glc-hjb2.onrender.com/vendor/autoload.php'; // This comes from Composer
+require __DIR__ . '/vendor/autoload.php';
 
 $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
 $client = new MongoDB\Client($uri); // Default local MongoDB URL

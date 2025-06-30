@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Connect to MongoDB
-    require 'https://glc-hjb2.onrender.com/vendor/autoload.php'; // make sure composer dependencies are installed
+    require __DIR__ . '/vendor/autoload.php';
     $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
     $client = new MongoDB\Client($uri);
     $collection = $client->green_link->shop_owners;

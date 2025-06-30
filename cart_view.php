@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'https://glc-hjb2.onrender.com/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 $username = $_SESSION['username'] ?? '';
 

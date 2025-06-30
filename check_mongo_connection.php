@@ -1,5 +1,5 @@
 <?php
-require 'https://glc-hjb2.onrender.com/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 try {
   $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
