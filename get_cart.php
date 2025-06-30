@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . 'db_connect.php'; // Connect to MongoDB
+require __DIR__ . '/db_connect.php'; // Connect to MongoDB
 
 $cursor = $db->cart->find([], ['sort' => ['timestamp' => -1]]);
 $items = [];
