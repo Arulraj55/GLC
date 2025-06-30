@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 80px;
+      background: #f9f9f9;
+    }
+
+    h2 {
+      margin: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 240px);
+      justify-content: center;
+      gap: 30px 50px;
+      padding: 30px;
+    }
+
+    .farmer-card {
+      width: 240px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease;
+    }
+
+    .farmer-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .farmer-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+
+    .farmer-info {
+      padding: 12px;
+    }
+
+    .farmer-info h4 {
+      margin: 6px 0;
+      font-size: 16px;
+    }
+
+    .farmer-info p {
+      margin: 4px 0;
+      color: #555;
+      font-size: 14px;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+
+    footer a button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    footer a button:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 600px) {
+      .shop-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .farmer-card {
+        margin: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>All Shops</h2>
+  <div class="shop-grid">
+    <a href="shop_products.html?shop=Alimentation%20Generale" class="farmer-card">
+      <img src="shop1.jpg" alt="Alimentation Generale" />
+      <div class="farmer-info">
+        <h4>Alimentation Generale</h4>
+        <p>⭐ 4.8 • 30 mins</p>
+        <p>📍 Chennai</p>
+      </div>
+    </a>
+
+    <a href="shop_products.html?shop=Organic%20Fresh" class="farmer-card">
+      <img src="shop2.jpg" alt="Organic Fresh" />
+      <div class="farmer-info">
+        <h4>Organic Fresh</h4>
+        <p>⭐ 4.7 • 25 mins</p>
+        <p>📍 Coimbatore</p>
+      </div>
+    </a>
+
+    <a href="shop_products.html?shop=Health%20%26%20Happiness" class="farmer-card">
+      <img src="shop3.jpg" alt="Health & Happiness" />
+      <div class="farmer-info">
+        <h4>Health & Happiness</h4>
+        <p>⭐ 4.6 • 20 mins</p>
+        <p>📍 Madurai</p>
+      </div>
+    </a>
+
+    <a href="shop_products.html?shop=Freshest%20and%20Finest" class="farmer-card">
+      <img src="shop4.jpg" alt="Freshest and Finest" />
+      <div class="farmer-info">
+        <h4>Freshest and Finest</h4>
+        <p>⭐ 4.5 • 35 mins</p>
+        <p>📍 Trichy</p>
+      </div>
+    </a>
+
+    <a href="shop_products.html?shop=Fresh%20%26%20Ready" class="farmer-card">
+      <img src="shop5.jpg" alt="Fresh & Ready" />
+      <div class="farmer-info">
+        <h4>Fresh & Ready</h4>
+        <p>⭐ 4.4 • 40 mins</p>
+        <p>📍 Salem</p>
+      </div>
+    </a>
+
+    <a href="shop_products.html?shop=Beverages" class="farmer-card">
+      <img src="shop6.jpg" alt="Beverages" />
+      <div class="farmer-info">
+        <h4>Beverages</h4>
+        <p>⭐ 4.3 • 32 mins</p>
+        <p>📍 Erode</p>
+      </div>
+    </a>
+
+    <a href="shop_products.html?shop=Organic%20Produce" class="farmer-card">
+      <img src="shop7.jpg" alt="Organic Produce" />
+      <div class="farmer-info">
+        <h4>Organic Produce</h4>
+        <p>⭐ 4.2 • 27 mins</p>
+        <p>📍 Thanjavur</p>
+      </div>
+    </a>
+
+    <a href="shop_products.html?shop=Fresh%20Foods" class="farmer-card">
+      <img src="shop8.jpg" alt="Fresh Foods" />
+      <div class="farmer-info">
+        <h4>Fresh Foods</h4>
+        <p>⭐ 4.1 • 22 mins</p>
+        <p>📍 Puducherry</p>
+      </div>
+    </a>
+  </div>
+
+  <footer>
+    <a href="index1.html"><button>Home</button></a>
+    <a href="shop.html"><button>Grocery Shop</button></a>
+    <a href="products.html"><button>Products</button></a>
+    <a href="search.html"><button>Search</button></a>
+  </footer>
+
+</body>
+</html>

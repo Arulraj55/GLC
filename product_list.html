@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shop's Products</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+    .product-card {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      text-align: center;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .product-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .product-card p { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Products from This Shop</h2>
+  <div class="product-grid">
+    <div class="product-card"><img src="product1.jpg"><p>Carrot</p></div>
+    <div class="product-card"><img src="product2.jpg"><p>Tomato</p></div>
+    <div class="product-card"><img src="product3.jpg"><p>Potato</p></div>
+    <div class="product-card"><img src="product4.jpg"><p>Corn</p></div>
+    <div class="product-card"><img src="product5.jpg"><p>Cucumber</p></div>
+    <div class="product-card"><img src="product6.jpg"><p>Onion</p></div>
+    <div class="product-card"><img src="product7.jpg"><p>Garlic</p></div>
+    <div class="product-card"><img src="product8.jpg"><p>Lettuce</p></div>
+    <div class="product-card"><img src="product9.jpg"><p>Bell Pepper</p></div>
+    <div class="product-card"><img src="product10.jpg"><p>Broccoli</p></div>
+    <div class="product-card"><img src="product11.jpg"><p>Eggplant</p></div>
+    <div class="product-card"><img src="product12.jpg"><p>Green Pepper</p></div>
+  </div>
+</body>
+</html>

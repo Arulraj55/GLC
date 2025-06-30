@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shops Selling Product</title>
+  <style>
+    body { font-family: Arial; background: #f9f9f9; padding-bottom: 80px; text-align: center; }
+    h2 { color: #333; }
+    .shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; max-width: 800px; margin: 0 auto; padding: 20px; }
+    .shop-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .shop-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; }
+    .shop-card p { font-weight: bold; margin: 10px 0; font-size: 18px; }
+    .buy-button { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+    .buy-button:hover { background-color: #45a049; }
+    .message { color: green; margin-top: 10px; font-weight: bold; }
+    .cart-button { position: fixed; top: 10px; right: 10px; background-color: #4CAF50; color: white; padding: 10px 16px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <!-- Cart button -->
+  <button class="cart-button" onclick="window.location.href='https://glc-hjb2.onrender.com/cart_view.php'">Cart</button>
+
+  <!-- Product name dynamically inserted -->
+  <h2>Shops selling <span id="productName"></span></h2>
+
+  <!-- Success message -->
+  <div id="message" class="message"></div>
+
+  <!-- Grid for displaying shops -->
+  <div class="shop-grid" id="shopsContainer"></div>
+
+  <script>
+    // 1. Get the product name from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productName = urlParams.get('product') || '';
+    document.getElementById("productName").innerText = productName;
+
+    // 2. Shops data
+    const shopNames = ["Alimentation Generale", "Organic Fresh", "Health & Happiness", "Freshest and Finest", "Fresh & Ready", "Beverages"];
+    const shopImages = ["shop1.jpg", "shop2.jpg", "shop3.jpg", "shop4.jpg", "shop5.jpg", "shop6.jpg"];
+    const shopPrices = [10, 12, 9, 11, 13, 8];
+
+    // 3. Product image mapping
+    const productImageMapping = {
+      'carrot': 'product1.jpg',
+      'tomato': 'product2.jpg',
+      'potato': 'product3.jpg',
+      'corn': 'product4.jpg',
+      'cucumber': 'product5.jpg',
+      'onion': 'product6.jpg',
+      'garlic': 'product7.jpg',
+      'lettuce': 'product8.jpg',
+      'bell pepper': 'product9.jpg',
+      'broccoli': 'product10.jpg',
+      'eggplant': 'product11.jpg',
+      'green pepper': 'product12.jpg',
+      'spinach': 'product13.jpg',
+      'beetroot': 'product14.jpg',
+      'coriander': 'product15.jpg',
+      'cabbage': 'product16.jpg'
+    };
+
+    // 4. Get correct product image
+    const productImage = productImageMapping[productName.trim().toLowerCase()] || 'default.jpg';
+
+    // 5. Populate shop cards
+    const container = document.getElementById("shopsContainer");
+    shopNames.forEach((shop, index) => {
+      const card = document.createElement('div');
+      card.className = "shop-card";
+      card.innerHTML = `
+        <img src="${shopImages[index]}" alt="${shop}">
+        <p>${shop} - $${shopPrices[index]}</p>
+        <button class="buy-button" onclick="addToCart('${productName}', '${shop}', '${productImage}', '${shopPrices[index]}')">Buy from this Shop</button>
+      `;
+      container.appendChild(card);
+    });
+
+    // 6. Add to cart function
+    function addToCart(product, shop, image, price) {
+      const username = localStorage.getItem("username");
+      if (!username) {
+        alert("Please sign in first.");
+        return;
+      }
+
+      fetch('https://glc-hjb2.onrender.com/add_to_cart1.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          username: username,
+          product: product,
+          shop: shop,
+          image: image,
+          price: price
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          alert(data.message);
+        } else if (data.error) {
+          alert(data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error adding to cart.');
+      });
+    }
+  </script>
+
+</body>
+</html>

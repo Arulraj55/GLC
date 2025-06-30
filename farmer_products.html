@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Farmer's Products</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+    .product-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      text-align: center;
+      padding: 10px;
+    }
+    .product-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+    .product-card h4 {
+      margin: 10px 0 5px;
+    }
+    .product-card button {
+      margin-top: 5px;
+      padding: 6px 10px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .product-card button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <a href="cart.html" style="position: fixed; top: 20px; right: 20px; background: green; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none;">View Cart</a> 
+
+  <h2>Products by <span id="farmer-name"></span></h2>
+
+  <div class="product-grid" id="product-grid"></div>
+
+  <script>
+    const products = [
+      { name: 'Carrot', price: 40 },
+      { name: 'Tomato', price: 30 },
+      { name: 'Potato', price: 25 },
+      { name: 'Corn', price: 35 },
+      { name: 'Cucumber', price: 28 },
+      { name: 'Onion', price: 20 },
+      { name: 'Garlic', price: 50 },
+      { name: 'Lettuce', price: 45 },     
+      { name: 'Bell Pepper', price: 55 },
+      { name: 'Broccoli', price: 60 },
+      { name: 'Eggplant', price: 38 },
+      { name: 'Green Pepper', price: 26 }
+    ];
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const farmerName = urlParams.get('farmer');
+    document.getElementById('farmer-name').innerText = farmerName;
+
+    const grid = document.getElementById('product-grid');
+    grid.innerHTML = products.map((p, index) => `
+      <div class="product-card">
+        <img src="product${index + 1}.jpg" alt="${p.name}">
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+        <button onclick="addToCart('${p.name}', '${farmerName}', '${p.price}', 'product${index + 1}.jpg')">Buy Now</button>
+      </div>
+    `).join('');
+
+    function addToCart(product, farmer, price, image) {
+      fetch('https://glc-hjb2.onrender.com/add_to_cart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product, farmer, price, image })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.success ? `${product} added to cart!` : 'Failed to add to cart.');
+      });
+    }
+  </script>
+</body>
+</html>

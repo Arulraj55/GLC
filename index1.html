@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 80px;
+      background: #f9f9f9;
+    }
+    h2 {
+      margin: 20px;
+      text-align: center;
+      color: #333;
+    }
+    .top-products {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px 20px;
+      gap: 15px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .top-products::-webkit-scrollbar {
+      display: none;
+    }
+    .product-card {
+      flex: 0 0 auto;
+      background: #fff;
+      width: 160px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .product-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .top-shops {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px;
+    }
+    .farmer-card {
+      width: 170px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      cursor: pointer;
+      text-align: center;
+    }
+    .farmer-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+    .farmer-info {
+      padding: 10px;
+    }
+    .farmer-info h4 {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    .farmer-info p {
+      margin: 2px 0;
+      color: #555;
+      font-size: 14px;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+    footer a button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    footer a button:hover {
+      background-color: #45a049;
+    }
+
+    /* Cart button styles */
+    .cart-button {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 999;
+    }
+    .cart-button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="cart-button" onclick="window.location.href='https://glc-hjb2.onrender.com/cart_view.php'">🛒 Cart</button>
+
+  <h2>Top Products</h2>
+  <div class="top-products">
+    <div class="product-card" onclick="goToProduct('Carrot')"><img src="product1.jpg"><p>Carrot</p></div>
+    <div class="product-card" onclick="goToProduct('Tomato')"><img src="product2.jpg"><p>Tomato</p></div>
+    <div class="product-card" onclick="goToProduct('Potato')"><img src="product3.jpg"><p>Potato</p></div>
+    <div class="product-card" onclick="goToProduct('Corn')"><img src="product4.jpg"><p>Corn</p></div>
+    <div class="product-card" onclick="goToProduct('Cucumber')"><img src="product5.jpg"><p>Cucumber</p></div>
+    <div class="product-card" onclick="goToProduct('Onion')"><img src="product6.jpg"><p>Onion</p></div>
+    <div class="product-card" onclick="goToProduct('Garlic')"><img src="product7.jpg"><p>Garlic</p></div>
+    <div class="product-card" onclick="goToProduct('Lettuce')"><img src="product8.jpg"><p>Lettuce</p></div>
+    <div class="product-card" onclick="goToProduct('Bell Pepper')"><img src="product9.jpg"><p>Bell Pepper</p></div>
+    <div class="product-card" onclick="goToProduct('Broccoli')"><img src="product10.jpg"><p>Broccoli</p></div>
+    <div class="product-card" onclick="goToProduct('Eggplant')"><img src="product11.jpg"><p>Eggplant</p></div>
+    <div class="product-card" onclick="goToProduct('Green Pepper')"><img src="product12.jpg"><p>Green Pepper</p></div>
+  </div>
+
+  <h2>Top Shops</h2>
+  <div class="top-shops">
+    <div class="farmer-card" onclick="goToFarmer('Alimentation Generale')">
+      <img src="shop1.jpg" alt="Alimentation Generale" />
+      <div class="farmer-info">
+        <h4>Alimentation Generale</h4>
+        <p>⭐ 4.8 • 30 mins</p>
+        <p>📍 Chennai</p>
+      </div>
+    </div>
+    <div class="farmer-card" onclick="goToFarmer('Organic Fresh')">
+      <img src="shop2.jpg" alt="Organic Fresh" />
+      <div class="farmer-info">
+        <h4>Organic Fresh</h4>
+        <p>⭐ 4.7 • 25 mins</p>
+        <p>📍 Coimbatore</p>
+      </div>
+    </div>
+    <div class="farmer-card" onclick="goToFarmer('Health & Happiness')">
+      <img src="shop3.jpg" alt="Health & Happiness" />
+      <div class="farmer-info">
+        <h4>Health & Happiness</h4>
+        <p>⭐ 4.6 • 20 mins</p>
+        <p>📍 Madurai</p>
+      </div>
+    </div>
+    <div class="farmer-card" onclick="goToFarmer('Freshest and Finest')">
+      <img src="shop4.jpg" alt="Freshest and Finest" />
+      <div class="farmer-info">
+        <h4>Freshest and Finest</h4>
+        <p>⭐ 4.5 • 35 mins</p>
+        <p>📍 Trichy</p>
+      </div>
+    </div>
+    <div class="farmer-card" onclick="goToFarmer('Fresh & Ready')">
+      <img src="shop5.jpg" alt="Fresh & Ready" />
+      <div class="farmer-info">
+        <h4>Fresh & Ready</h4>
+        <p>⭐ 4.4 • 40 mins</p>
+        <p>📍 Salem</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <a href="index1.html"><button>Home</button></a>
+    <a href="shop.html"><button>Grocery Shop</button></a>
+    <a href="products.html"><button>Products</button></a>
+    <a href="search.html"><button>Search</button></a>
+  </footer>
+
+  <script>
+    function goToFarmer(name) {
+      window.location.href = `shop_products.html?shop=${encodeURIComponent(name)}`;
+    }
+
+    function goToProduct(product) {
+      window.location.href = `product_shops.html?product=${encodeURIComponent(product)}`;
+    }
+  </script>
+
+</body>
+</html>
