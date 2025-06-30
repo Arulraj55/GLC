@@ -27,7 +27,7 @@ if (!$user) {
 // Now verify the password
 if (password_verify($password, $user['password'])) {
     $_SESSION['username'] = $username;
-    header("Location: https://glc-hjb2.onrender.com/index1.php");
+    header("Location: https://glc-hjb2.onrender.com/index1.html");
     exit();
 } else {
     echo "<script>alert('Invalid username or password.'); window.location.href='signin2.html';</script>";

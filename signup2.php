@@ -43,7 +43,7 @@ $insertResult = $userCollection->insertOne($newUser);
 
 if ($insertResult->getInsertedCount() > 0) {
     $_SESSION['username'] = $username;
-    header("Location: https://glc-hjb2.onrender.com/index1.php");
+    header("Location: https://glc-hjb2.onrender.com/index1.html");
     exit();
 } else {
     echo "<script>alert('Sign up failed. Please try again.'); window.location.href='signup2.html';</script>";
