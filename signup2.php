@@ -16,14 +16,14 @@ $address = $_POST['address'] ?? '';
 
 // Validate inputs
 if (empty($username) || empty($password) || empty($email) || empty($phone) || empty($address)) {
-    echo "All fields are required!";
+    echo "<script>alert('All fields are required!'); window.location.href='signup2.html';</script>";
     exit;
 }
 
 // Check if username already exists
 $userExists = $userCollection->findOne(['username' => $username]);
 if ($userExists) {
-    echo "Sign up failed. Try a different username.";
+    echo "<script>alert('Sign up failed. Try a different username.'); window.location.href='signup2.html';</script>";
     exit;
 }
 
@@ -42,8 +42,11 @@ $newUser = [
 $insertResult = $userCollection->insertOne($newUser);
 
 if ($insertResult->getInsertedCount() > 0) {
-    echo "success";
+    $_SESSION['username'] = $username;
+    header("Location: https://glc-hjb2.onrender.com/index1.php");
+    exit();
 } else {
-    echo "Sign up failed. Please try again.";
+    echo "<script>alert('Sign up failed. Please try again.'); window.location.href='signup2.html';</script>";
+    exit();
 }
 ?>

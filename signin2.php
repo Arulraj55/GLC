@@ -12,7 +12,7 @@ $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
 
 if (empty($username) || empty($password)) {
-    echo "All fields are required!";
+    echo "<script>alert('All fields are required!'); window.location.href='signin2.html';</script>";
     exit;
 }
 
@@ -20,17 +20,17 @@ if (empty($username) || empty($password)) {
 $user = $userCollection->findOne(['username' => $username]);
 
 if (!$user) {
-    echo "Invalid username or password.";
+    echo "<script>alert('Invalid username or password.'); window.location.href='signin2.html';</script>";
     exit;
 }
 
 // Now verify the password
 if (password_verify($password, $user['password'])) {
-    // Password correct
     $_SESSION['username'] = $username;
-    echo "success"; // Send 'success' to JS
+    header("Location: https://glc-hjb2.onrender.com/index1.php");
+    exit();
 } else {
-    // Password wrong
-    echo "Invalid username or password.";
+    echo "<script>alert('Invalid username or password.'); window.location.href='signin2.html';</script>";
+    exit();
 }
 ?>

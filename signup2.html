@@ -7,7 +7,7 @@
 </head>
 <body>
   <div class="container">
-    <form id="signupForm">
+    <form action="https://glc-hjb2.onrender.com/signup2.php" method="POST">
       <input type="text" name="username" placeholder="Enter Username" required />
       <input type="email" name="email" placeholder="Enter Email" required />
       <input type="password" name="password" placeholder="Enter Password" required />
@@ -16,34 +16,5 @@
       <button type="submit">Sign Up</button>
     </form>
   </div>
-
-  <script>
-    const form = document.getElementById("signupForm");
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const username = formData.get("username");
-
-      fetch("https://glc-hjb2.onrender.com/signup2.php", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(result => {
-        result = result.trim(); // Remove any extra whitespace
-        if (result === "success") {
-          localStorage.setItem("username", username);
-          window.location.href = "index1.html";  // Redirect after successful sign up
-        } else {
-          alert(result);  // Display the error message sent from PHP
-        }
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("An error occurred. Please try again.");
-      });
-    });
-  </script>
 </body>
 </html>
