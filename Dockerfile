@@ -1,18 +1,18 @@
 FROM php:8.2-apache
 
-# Install system dependencies
+# Install system dependencies and SSL libraries
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libssl-dev \
     zip \
     git \
     unzip \
     && docker-php-ext-install pdo pdo_mysql
 
-# Install MongoDB extension
-RUN pecl install mongodb-1.21.0 \
-    && docker-php-ext-enable mongodb
+# Install MongoDB extension with SSL support
+RUN pecl install mongodb && docker-php-ext-enable mongodb
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
