@@ -11,8 +11,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-install pdo pdo_mysql
 
-# Install MongoDB extension
-RUN pecl install mongodb && \
+# Remove the current MongoDB extension installation
+RUN pecl uninstall mongodb
+
+# Install the compatible version (1.21.x)
+RUN pecl install mongodb-1.21.1 && \
     docker-php-ext-enable mongodb
 
 # Verify MongoDB extension is enabled
