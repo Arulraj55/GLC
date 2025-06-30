@@ -4,11 +4,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Connect to MongoDB
     require 'vendor/autoload.php'; // if you installed MongoDB extension with Composer
-<<<<<<< HEAD
-    $uri ="mongodb://localhost:27017/";
-=======
-    $uri ="mongodb+srv://arulrajjebasingh:fpc6MjrhQqCYu9qW@cluster0.ze3oww2.mongodb.net/";
->>>>>>> cfb9cd9582638246f461bccb56611f93f59f073c
+    $uri = "mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/";
     $client = new MongoDB\Client($uri);
 
     // Select your database and collection
