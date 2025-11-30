@@ -96,16 +96,42 @@
     </div>
   </div>
 <script>
-(async function init(){
+let sessionRetries = 0;
+const maxRetries = 5;
+
+async function checkSession() {
   try {
     const res = await fetch('/api/session', { credentials: 'include' });
     const session = await res.json();
-    if(!session.loggedIn || session.role !== 'farmer'){
-      window.location.href = 'signin.html';
-      return;
-    }
-    document.getElementById('welcomeMsg').textContent = `Welcome, ${session.username}!`;
-  } catch(e){ console.warn('Session check failed'); }
+    console.log('Session check:', session);
+    return session;
+  } catch(e) {
+    console.warn('Session check failed:', e);
+    return { loggedIn: false };
+  }
+}
+
+(async function init(){
+  // Wait a bit for session to establish after signup/login redirect
+  await new Promise(r => setTimeout(r, 500));
+  
+  let session = await checkSession();
+  
+  // Retry if not logged in - session may take time to establish
+  while ((!session.loggedIn || session.role !== 'farmer') && sessionRetries < maxRetries) {
+    sessionRetries++;
+    console.log(`Session retry ${sessionRetries}/${maxRetries}...`);
+    await new Promise(r => setTimeout(r, 600));
+    session = await checkSession();
+  }
+  
+  if(!session.loggedIn || session.role !== 'farmer'){
+    console.log('Not logged in as farmer after retries, redirecting...');
+    window.location.href = 'signin.html';
+    return;
+  }
+  
+  document.getElementById('welcomeMsg').textContent = `Welcome, ${session.username}!`;
   await loadProducts();
 })();
 
