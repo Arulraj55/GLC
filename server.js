@@ -133,7 +133,10 @@ app.post('/api/signup', async (req, res) => {
     });
 
     req.session.username = username;
-    return res.json({ success: true, redirect: '/farmer_dashboard.html' });
+    req.session.save((err) => {
+      if (err) console.error('Session save error:', err);
+      return res.json({ success: true, redirect: '/farmer_dashboard.html' });
+    });
   } catch (err) {
     console.error('Signup error:', err);
     return res.status(500).json({ error: 'Internal server error' });
