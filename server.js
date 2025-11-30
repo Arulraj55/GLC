@@ -841,20 +841,9 @@ app.get('/api/orders/:orderId', async (req, res) => {
   }
 });
 
-// Serve index.html for root and any unmatched routes (SPA fallback)
+// Serve index.html for root URL
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
-});
-
-app.get('*', (req, res) => {
-  // If file exists in frontend, it's already served by static middleware
-  // This catches unmatched routes
-  const filePath = path.join(__dirname, 'frontend', req.path);
-  if (fs.existsSync(filePath)) {
-    res.sendFile(filePath);
-  } else {
-    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
-  }
 });
 
 app.listen(PORT, () => {
