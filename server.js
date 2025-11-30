@@ -379,7 +379,7 @@ app.post('/api/shop/signup', async (req, res) => {
     console.log('[SHOP SIGNUP] created user:', username);
 
     req.session.shopUsername = username;
-    return res.json({ success: true, redirect: '/shop_dashboard.html' });
+    return res.json({ success: true, redirect: '/login1.html' });
   } catch (err) {
     console.error('Shop signup error:', err);
     return res.status(500).json({ error: 'Internal server error' });
@@ -418,7 +418,7 @@ app.post('/api/shop/login', async (req, res) => {
         console.error('Session save error:', err);
         return res.status(500).json({ error: 'Session save failed' });
       }
-      return res.json({ success: true, redirect: '/shop_dashboard.html' });
+      return res.json({ success: true, redirect: '/login1.html' });
     });
   } catch (err) {
     console.error('Shop login error:', err);
