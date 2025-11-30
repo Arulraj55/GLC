@@ -38,7 +38,19 @@
     .empty-state { grid-column:1/-1; text-align:center; padding:60px 20px; }
     .empty-state h3 { font-size:20px; margin-bottom:12px; color:var(--muted); }
     .empty-state p { color:#999; margin-bottom:20px; }
-    .empty-state a { display:inline-block; background:var(--primary); color:#fff; padding:12px 24px; border-radius:10px; text-decoration:none; font-weight:600; }
+    .empty-state button { display:inline-block; background:var(--primary); color:#fff; padding:12px 24px; border-radius:10px; border:none; font-weight:600; cursor:pointer; }
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); align-items:center; justify-content:center; z-index:100; }
+    .modal.show { display:flex; }
+    .modal-content { background:var(--surface); width:90%; max-width:400px; padding:24px; border-radius:var(--radius); }
+    .modal h2 { margin-bottom:20px; font-size:20px; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:var(--muted); }
+    .form-group input { width:100%; padding:12px; border:2px solid #e0e0e0; border-radius:10px; font-size:14px; transition:.2s; }
+    .form-group input:focus { outline:none; border-color:var(--primary); }
+    .modal-actions { display:flex; gap:12px; margin-top:20px; }
+    .modal-actions button { flex:1; padding:12px; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; }
+    .modal-actions .cancel { background:#f5f5f5; color:var(--text); }
+    .modal-actions .save { background:var(--primary); color:#fff; }
     @media(max-width:600px){ .metrics{grid-template-columns:repeat(2,1fr);} }
   </style>
 </head>
@@ -57,8 +69,41 @@
   <div class="products-grid" id="productsGrid"></div>
   <div class="footer-actions">
     <button type="button" class="action-btn secondary" onclick="window.location.href='shop_dashboard.html'">Products</button>
-    <button type="button" class="action-btn primary" onclick="window.location.href='buy.html'">Add</button>
+    <button type="button" class="action-btn primary" id="addProductBtn">Add</button>
   </div>
+  
+  <!-- Add Product Modal -->
+  <div class="modal" id="addModal">
+    <div class="modal-content">
+      <h2>Add Product</h2>
+      <form id="productForm">
+        <div class="form-group">
+          <label>Product Name</label>
+          <input type="text" name="name" list="produceList" placeholder="e.g. Carrot" required />
+          <datalist id="produceList">
+            <option>Carrot</option><option>Tomato</option><option>Potato</option><option>Corn</option><option>Cucumber</option><option>Onion</option><option>Garlic</option><option>Lettuce</option><option>Bell Pepper</option><option>Broccoli</option><option>Eggplant</option><option>Green Pepper</option><option>Spinach</option><option>Beetroot</option><option>Coriander</option><option>Cabbage</option>
+          </datalist>
+        </div>
+        <div class="form-group">
+          <label>Price (₹ per kg)</label>
+          <input type="number" name="price" min="1" max="999" step="0.5" placeholder="e.g. 45" required />
+        </div>
+        <div class="form-group">
+          <label>Stock (kg)</label>
+          <input type="number" name="stock" min="1" max="1000" placeholder="e.g. 50" required />
+        </div>
+        <div class="form-group">
+          <label>Photo (optional)</label>
+          <input type="file" name="photo" accept="image/*" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="cancel" id="cancelBtn">Cancel</button>
+          <button type="submit" class="save">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
 <script>
 let sessionRetries = 0;
 const maxRetries = 3;
@@ -76,12 +121,10 @@ async function checkSession() {
 }
 
 (async function init(){
-  // Wait a moment for session to be ready
   await new Promise(r => setTimeout(r, 300));
   
   let session = await checkSession();
   
-  // Retry if not logged in (session might not be ready yet)
   while ((!session.loggedIn || session.role !== 'shop') && sessionRetries < maxRetries) {
     sessionRetries++;
     console.log(`Session retry ${sessionRetries}/${maxRetries}...`);
@@ -99,18 +142,49 @@ async function checkSession() {
   await loadProducts();
 })();
 
+// Modal handlers
+document.getElementById('addProductBtn').addEventListener('click', () => {
+  document.getElementById('addModal').classList.add('show');
+});
+document.getElementById('cancelBtn').addEventListener('click', () => {
+  document.getElementById('addModal').classList.remove('show');
+});
+
+// Form submit
+document.getElementById('productForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData();
+  formData.append('name', form.name.value.trim());
+  formData.append('price', form.price.value);
+  formData.append('stock', form.stock.value);
+  if(form.photo.files[0]) formData.append('photo', form.photo.files[0]);
+  
+  try {
+    const res = await fetch('/api/shop/product', { method:'POST', body:formData, credentials:'include' });
+    const data = await res.json();
+    if(res.ok && data.success){
+      document.getElementById('addModal').classList.remove('show');
+      form.reset();
+      await loadProducts();
+    } else {
+      alert(data.error || 'Failed to save');
+    }
+  } catch(err){ alert('Network error'); }
+});
+
 async function loadProducts(){
   const grid = document.getElementById('productsGrid');
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">Loading...</div>';
   try {
-    const res = await fetch('/api/shop/products');
+    const res = await fetch('/api/shop/products', { credentials: 'include' });
     if(!res.ok) throw new Error('Failed to load');
     const products = await res.json();
     if(!products.length){
       grid.innerHTML = `<div class="empty-state">
         <h3>No products in inventory</h3>
-        <p>Start buying from farmers to stock your shop!</p>
-        <a href="buy.html">Browse Farmers</a>
+        <p>Add products to your shop inventory!</p>
+        <button onclick="document.getElementById('addModal').classList.add('show')">Add Product</button>
       </div>`;
       updateMetrics([]);
       return;
@@ -123,6 +197,9 @@ async function loadProducts(){
           <h3>${p.name}</h3>
           <div class="price">${p.price != null ? '₹'+p.price+' per kg' : 'No price'}</div>
           <div class="stock">Stock: ${p.stock || 0} kg</div>
+          <div class="actions">
+            <button class="btn remove" onclick="removeProduct('${p.name}')">Remove</button>
+          </div>
         </div>
       </div>`;
     }).join('');
@@ -130,6 +207,15 @@ async function loadProducts(){
   } catch(e){
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#d32f2f;">Failed to load products</div>';
   }
+}
+
+async function removeProduct(name){
+  if(!confirm(`Remove ${name}?`)) return;
+  try {
+    const res = await fetch(`/api/shop/product?name=${encodeURIComponent(name)}`, {method:'DELETE', credentials:'include'});
+    if(res.ok) await loadProducts();
+    else alert('Failed to remove');
+  } catch(e){ alert('Network error'); }
 }
 
 function updateMetrics(products){

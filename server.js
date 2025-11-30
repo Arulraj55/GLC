@@ -265,6 +265,67 @@ app.get('/api/shop/products', requireLogin, async (req, res) => {
   }
 });
 
+// Add or update a shop product
+app.post('/api/shop/product', requireLogin, upload.single('photo'), async (req, res) => {
+  if (!ensureDb(res)) return;
+  try {
+    const { name, price, stock } = req.body;
+    if (!name || price === undefined) {
+      return res.status(400).json({ error: 'Missing name or price' });
+    }
+    const numericPrice = parseFloat(price);
+    if (Number.isNaN(numericPrice) || numericPrice < 0) {
+      return res.status(400).json({ error: 'Invalid price' });
+    }
+    const numericStock = parseInt(stock) || 0;
+    let image;
+    if (req.file) {
+      image = `uploads/${req.file.filename}`;
+    } else {
+      const imageIdx = produceNames.findIndex(p => p.toLowerCase() === String(name).toLowerCase());
+      image = imageIdx >= 0 ? `frontend/product${imageIdx + 1}.jpg` : 'frontend/default.jpg';
+    }
+    const shops = db.collection('shops');
+    const username = req.session.shopUsername || req.session.username;
+    const shop = await shops.findOne({ username });
+    if (!shop) return res.status(404).json({ error: 'Shop not found' });
+    let products = shop.products || [];
+    const existingIdx = products.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+    if (existingIdx >= 0) {
+      products[existingIdx].price = numericPrice;
+      products[existingIdx].stock = numericStock;
+      if (image) products[existingIdx].image = image;
+    } else {
+      products.push({ name, price: numericPrice, stock: numericStock, image });
+    }
+    await shops.updateOne({ _id: shop._id }, { $set: { products } });
+    res.json({ success: true, products });
+  } catch (e) {
+    console.error('Add/update shop product error:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a shop product
+app.delete('/api/shop/product', requireLogin, async (req, res) => {
+  if (!ensureDb(res)) return;
+  try {
+    const { name } = req.query;
+    if (!name) return res.status(400).json({ error: 'Missing product name' });
+    const shops = db.collection('shops');
+    const username = req.session.shopUsername || req.session.username;
+    const shop = await shops.findOne({ username });
+    if (!shop) return res.status(404).json({ error: 'Shop not found' });
+    let products = shop.products || [];
+    products = products.filter(p => p.name.toLowerCase() !== name.toLowerCase());
+    await shops.updateOne({ _id: shop._id }, { $set: { products } });
+    res.json({ success: true, products });
+  } catch (e) {
+    console.error('Delete shop product error:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Add or update a farmer product
 app.post('/api/farmer/product', requireLogin, upload.single('photo'), async (req, res) => {
   if (!ensureDb(res)) return;
