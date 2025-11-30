@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Waste folder (duplicate/unused files)
+waste/
+
+# IDE/Editor
+.vscode/
+.idea/
+.qodo/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local

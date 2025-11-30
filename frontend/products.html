@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding-bottom: 80px;
+      background: #f9f9f9;
+    }
+
+    h2 {
+      margin: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .product-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1000px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .product-card p {
+      margin: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+
+    footer a button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    footer a button:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 768px) {
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Our Products</h2>
+
+  <div class="product-wrapper">
+    <div class="product-grid">
+      <div class="product-card"><img src="product1.jpg"><p>Carrot</p></div>
+      <div class="product-card"><img src="product2.jpg"><p>Tomato</p></div>
+      <div class="product-card"><img src="product3.jpg"><p>Potato</p></div>
+      <div class="product-card"><img src="product4.jpg"><p>Corn</p></div>
+      <div class="product-card"><img src="product5.jpg"><p>Cucumber</p></div>
+      <div class="product-card"><img src="product6.jpg"><p>Onion</p></div>
+      <div class="product-card"><img src="product7.jpg"><p>Garlic</p></div>
+      <div class="product-card"><img src="product8.jpg"><p>Lettuce</p></div>
+      <div class="product-card"><img src="product9.jpg"><p>Bell Pepper</p></div>
+      <div class="product-card"><img src="product10.jpg"><p>Broccoli</p></div>
+      <div class="product-card"><img src="product11.jpg"><p>Eggplant</p></div>
+      <div class="product-card"><img src="product12.jpg"><p>Green Pepper</p></div>
+      <div class="product-card"><img src="product13.jpg"><p>Spinach</p></div>
+      <div class="product-card"><img src="product14.jpg"><p>Beetroot</p></div>
+      <div class="product-card"><img src="product15.jpg"><p>Coriander</p></div>
+      <div class="product-card"><img src="product16.jpg"><p>Cabbage</p></div>
+    </div>
+  </div>
+
+  <footer>
+    <a href="index1.html"><button>Home</button></a>
+    <a href="shop.html"><button>Grocery Shop</button></a>
+    <a href="products.html"><button>Products</button></a>
+    <a href="search.html"><button>Search</button></a>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', function () {
+        const productName = this.querySelector('p').textContent.trim();
+        window.location.href = `product_shops.html?product=${encodeURIComponent(productName)}`;
+      });
+    });
+  </script>
+
+</body>
+</html>

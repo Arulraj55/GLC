@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shops Selling Product</title>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header" style="justify-content:center;">
+      <div class="brand">Select Shop</div>
+    </header>
+    <main class="main">
+      <h2 class="text-center" style="margin:0 0 1rem;">For <span id="productName"></span></h2>
+      <div class="grid cols-4" id="shopGrid"></div>
+    </main>
+    <nav class="footer-nav">
+      <a href="index1.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="search.html">Search</a>
+      <a href="cart.html">Cart</a>
+    </nav>
+  </div>
+<script>
+const shops = [
+  { name:'Alimentation Generale', img:'shop1.jpg', base:10 },
+  { name:'Organic Fresh', img:'shop2.jpg', base:12 },
+  { name:'Health & Happiness', img:'shop3.jpg', base:9 },
+  { name:'Freshest and Finest', img:'shop4.jpg', base:11 },
+  { name:'Fresh & Ready', img:'shop5.jpg', base:13 },
+  { name:'Beverages', img:'shop6.jpg', base:8 }
+];
+const params = new URLSearchParams(location.search);
+const productName = params.get('product') || '';
+document.getElementById('productName').textContent = productName;
+const grid = document.getElementById('shopGrid');
+grid.innerHTML = shops.map(s => {
+  const price = Math.round((s.base + Math.random()*6) * 2)/2;
+  return `
+    <div class='card'>
+      <div class='media' style="background-image:url('${s.img}')"></div>
+      <div class='content'>
+        <strong>${s.name}</strong>
+        <span class='price'>₹${price}</span>
+        <div class='actions'>
+          <button class='button' onclick="addToCart('${productName}','${s.name}',${price})">Buy</button>
+        </div>
+      </div>
+    </div>`;
+}).join('');
+
+function addToCart(product, shop, price){
+  if(!product){ alert('No product selected'); return; }
+  fetch('/api/cart', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ product, farmer: shop, price })
+  }).then(r=>r.json()).then(d=>{
+    alert(d.success ? `${product} from ${shop} added (₹${price})` : (d.error||'Failed'));
+  }).catch(()=> alert('Network error'));
+}
+</script>
+</body>
+</html>

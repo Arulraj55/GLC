@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenLink Market</title>
+  <style>
+    :root { --primary:#2e7d32; --primary-dark:#1b5e20; --accent:#ff9800; --bg:#f5f7f5; --surface:#fff; --text:#1a2e1a; --muted:#5d6b5d; --radius:16px; --shadow:0 4px 20px rgba(0,0,0,.08); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:75px; }
+    
+    .header { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; padding:20px; position:sticky; top:0; z-index:50; }
+    .header h1 { font-size:22px; font-weight:700; display:flex; align-items:center; gap:10px; }
+    .header .cart-btn { position:absolute; right:20px; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.2); border:none; color:#fff; padding:10px 16px; border-radius:12px; font-weight:600; cursor:pointer; backdrop-filter:blur(10px); }
+    
+    .tab-content { display:none; padding:20px; max-width:1000px; margin:0 auto; }
+    .tab-content.active { display:block; }
+    
+    .section-title { font-size:20px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+    .section-title span { font-size:24px; }
+    
+    /* 4 items per row max - same size cards */
+    .products-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px; }
+    .product-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; transition:.3s; }
+    .product-card:hover { transform:translateY(-6px); box-shadow:0 12px 40px rgba(0,0,0,.15); }
+    .product-card .img { width:100%; aspect-ratio:4/3; background:#e8f5e9 center/cover no-repeat; }
+    .product-card .info { padding:12px; }
+    .product-card h3 { font-size:14px; font-weight:600; margin-bottom:4px; line-height:1.2; }
+    .product-card .price { font-size:16px; font-weight:800; color:var(--primary); }
+    .product-card .unit { font-size:11px; color:var(--muted); font-weight:normal; }
+    .product-card .actions { margin-top:10px; }
+    .product-card .actions button { width:100%; padding:8px 10px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-size:12px; font-weight:600; cursor:pointer; transition:.2s; }
+    .product-card .actions button:hover { background:var(--primary-dark); }
+    
+    .farmers-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px; }
+    .farmer-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; transition:.3s; }
+    .farmer-card:hover { transform:translateY(-6px); box-shadow:0 12px 40px rgba(0,0,0,.15); }
+    .farmer-card .img { width:100%; aspect-ratio:4/3; background:#e8f5e9 center/cover no-repeat; }
+    .farmer-card .info { padding:14px; }
+    .farmer-card h3 { font-size:15px; font-weight:700; color:var(--primary); margin-bottom:6px; }
+    .farmer-card .rating { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .farmer-card .rating .stars { color:var(--accent); font-size:14px; }
+    .farmer-card .rating .score { font-weight:700; font-size:14px; }
+    .farmer-card .location { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:4px; }
+    .farmer-card .products-count { font-size:11px; color:var(--muted); margin-top:6px; padding-top:8px; border-top:1px solid #eee; }
+    
+    .search-box { background:var(--surface); padding:16px; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:20px; }
+    .search-box input { width:100%; padding:14px 20px; border:2px solid #e0e0e0; border-radius:12px; font-size:16px; transition:.2s; }
+    .search-box input:focus { outline:none; border-color:var(--primary); }
+    
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:var(--surface); display:flex; box-shadow:0 -4px 20px rgba(0,0,0,.1); z-index:100; }
+    .bottom-nav .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 8px; text-decoration:none; color:var(--muted); font-size:11px; font-weight:600; transition:.2s; cursor:pointer; border:none; background:none; position:relative; }
+    .bottom-nav .nav-item.active { color:var(--primary); }
+    .bottom-nav .nav-item.active::before { content:''; position:absolute; top:0; width:40px; height:3px; background:var(--primary); border-radius:0 0 4px 4px; }
+    .bottom-nav .nav-item .icon { font-size:22px; margin-bottom:4px; }
+    
+    /* Product Detail Modal */
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:200; align-items:center; justify-content:center; }
+    .modal.show { display:flex; }
+    .modal-content { background:var(--surface); width:90%; max-width:450px; border-radius:20px; overflow:hidden; animation:popIn .3s ease; }
+    @keyframes popIn { from{transform:scale(.9);opacity:0} to{transform:scale(1);opacity:1} }
+    .modal-img { width:100%; aspect-ratio:4/3; background:#e8f5e9 center/cover no-repeat; }
+    .modal-body { padding:24px; }
+    .modal-body h2 { font-size:22px; margin-bottom:12px; color:var(--primary); }
+    .modal-body .price-big { font-size:28px; font-weight:800; color:var(--primary); margin-bottom:16px; }
+    .modal-body .details { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+    .modal-body .detail-item { background:#f5f7f5; padding:12px; border-radius:10px; }
+    .modal-body .detail-item .label { font-size:11px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
+    .modal-body .detail-item .value { font-size:14px; font-weight:600; }
+    .modal-actions { display:flex; gap:12px; }
+    .modal-actions button { flex:1; padding:14px; border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; transition:.2s; }
+    .modal-actions .close-btn { background:#f5f5f5; color:var(--text); }
+    .modal-actions .add-btn { background:var(--primary); color:#fff; }
+    .modal-actions .add-btn:hover { background:var(--primary-dark); }
+    
+    /* Farmer Modal */
+    .farmer-modal-content { background:var(--surface); width:100%; max-width:600px; max-height:85vh; border-radius:24px 24px 0 0; overflow-y:auto; animation:slideUp .3s ease; }
+    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .farmer-modal-header { padding:20px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:16px; position:sticky; top:0; background:var(--surface); }
+    .farmer-modal-header .farmer-img { width:70px; height:70px; border-radius:50%; object-fit:cover; }
+    .farmer-modal-header .farmer-info h2 { font-size:20px; margin-bottom:4px; }
+    .farmer-modal-header .close-btn { position:absolute; right:16px; top:16px; background:none; border:none; font-size:28px; cursor:pointer; color:var(--muted); }
+    .farmer-modal-products { padding:20px; display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    
+    @media(max-width:800px){ .products-grid,.farmers-grid{grid-template-columns:repeat(2,1fr);} .farmer-modal-products{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:480px){ .products-grid,.farmers-grid{grid-template-columns:repeat(2,1fr);} }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>🌿 GreenLink Market</h1>
+    <button class="cart-btn" onclick="location.href='cart.html'">🛒 Cart</button>
+  </header>
+
+  <!-- HOME TAB -->
+  <div class="tab-content active" id="tab-home">
+    <div class="section-title"><span>🏆</span> Top Products</div>
+    <div class="products-grid" id="topProducts"></div>
+    <div class="section-title"><span>⭐</span> Top Farmers</div>
+    <div class="farmers-grid" id="topFarmers"></div>
+  </div>
+
+  <!-- ALL PRODUCTS TAB -->
+  <div class="tab-content" id="tab-products">
+    <div class="section-title"><span>🥬</span> All Products</div>
+    <div class="products-grid" id="allProducts"></div>
+  </div>
+
+  <!-- ALL FARMERS TAB -->
+  <div class="tab-content" id="tab-farmers">
+    <div class="section-title"><span>👨‍🌾</span> All Farmers</div>
+    <div class="farmers-grid" id="allFarmers"></div>
+  </div>
+
+  <!-- SEARCH TAB -->
+  <div class="tab-content" id="tab-search">
+    <div class="section-title"><span>🔍</span> Search</div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search products or farmers..." />
+    </div>
+    <div class="products-grid" id="searchResults"></div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="home"><span class="icon">🏠</span>Home</button>
+    <button class="nav-item" data-tab="products"><span class="icon">🥬</span>All Products</button>
+    <button class="nav-item" data-tab="farmers"><span class="icon">👨‍🌾</span>All Farmers</button>
+    <button class="nav-item" data-tab="search"><span class="icon">🔍</span>Search</button>
+  </nav>
+
+  <!-- Product Detail Modal -->
+  <div class="modal" id="productModal">
+    <div class="modal-content">
+      <div class="modal-img" id="modalProductImg"></div>
+      <div class="modal-body">
+        <h2 id="modalProductName"></h2>
+        <div class="price-big" id="modalProductPrice"></div>
+        <div class="details">
+          <div class="detail-item"><div class="label">Produced Date</div><div class="value" id="modalProducedDate"></div></div>
+          <div class="detail-item"><div class="label">Expiry Period</div><div class="value" id="modalExpiryPeriod"></div></div>
+          <div class="detail-item"><div class="label">Category</div><div class="value" id="modalCategory"></div></div>
+          <div class="detail-item"><div class="label">Stock</div><div class="value" id="modalStock"></div></div>
+          <div class="detail-item"><div class="label">Farmer</div><div class="value" id="modalFarmerSource"></div></div>
+          <div class="detail-item"><div class="label">Origin</div><div class="value" id="modalFarmerOrigin"></div></div>
+        </div>
+        <div class="modal-actions">
+          <button class="close-btn" onclick="closeProductModal()">Close</button>
+          <button class="add-btn" id="modalAddBtn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Farmer Products Modal -->
+  <div class="modal" id="farmerModal" style="align-items:flex-end;">
+    <div class="farmer-modal-content">
+      <div class="farmer-modal-header">
+        <img class="farmer-img" id="modalFarmerImg" src="" alt="Farmer" />
+        <div class="farmer-info">
+          <h2 id="modalFarmerName"></h2>
+          <div class="rating"><span class="stars">★★★★★</span><span class="score" id="modalFarmerRating"></span></div>
+          <div class="location">📍 <span id="modalFarmerLocation"></span></div>
+        </div>
+        <button class="close-btn" onclick="closeFarmerModal()">&times;</button>
+      </div>
+      <div class="farmer-modal-products" id="modalProducts"></div>
+    </div>
+  </div>
+
+<script>
+// ============ DATA ============
+// 16 unique products - each image matches the product name exactly
+const baseProducts = [
+  {id:1, name:'Carrot', img:'product1.jpg', category:'Root Vegetable', expiry:'7 days', price:36},
+  {id:2, name:'Tomato', img:'product2.jpg', category:'Vegetable', expiry:'5 days', price:44},
+  {id:3, name:'Potato', img:'product3.jpg', category:'Root Vegetable', expiry:'14 days', price:32},
+  {id:4, name:'Corn', img:'product4.jpg', category:'Grain', expiry:'10 days', price:52},
+  {id:5, name:'Cucumber', img:'product5.jpg', category:'Vegetable', expiry:'5 days', price:40},
+  {id:6, name:'Onion', img:'product6.jpg', category:'Vegetable', expiry:'21 days', price:30},
+  {id:7, name:'Garlic', img:'product7.jpg', category:'Spice', expiry:'30 days', price:90},
+  {id:8, name:'Lettuce', img:'product8.jpg', category:'Leafy Green', expiry:'4 days', price:48},
+  {id:9, name:'Bell Pepper', img:'product9.jpg', category:'Vegetable', expiry:'7 days', price:70},
+  {id:10, name:'Broccoli', img:'product10.jpg', category:'Vegetable', expiry:'5 days', price:82},
+  {id:11, name:'Eggplant', img:'product11.jpg', category:'Vegetable', expiry:'7 days', price:64},
+  {id:12, name:'Green Pepper', img:'product12.jpg', category:'Vegetable', expiry:'7 days', price:60},
+  {id:13, name:'Spinach', img:'product13.jpg', category:'Leafy Green', expiry:'3 days', price:58},
+  {id:14, name:'Beetroot', img:'product14.jpg', category:'Root Vegetable', expiry:'14 days', price:72},
+  {id:15, name:'Coriander', img:'product15.jpg', category:'Herb', expiry:'5 days', price:55},
+  {id:16, name:'Cabbage', img:'product16.jpg', category:'Vegetable', expiry:'10 days', price:45}
+];
+
+const baseProductOwners = {
+  1:11, 2:11, 3:11, 4:11,
+  5:12, 6:12, 7:12, 8:12,
+  9:13,10:13,11:13,12:13,
+  13:14,14:14,15:14,16:14
+};
+
+const clampPrice = (value = 20) => {
+  if(Number.isNaN(value)) return 40;
+  return Math.min(150, Math.max(20, Math.round(value)));
+};
+const priceFromUsd = (usd = 1.5) => {
+  const base = usd * 40;
+  const withVariance = base + (Math.random() * 10 - 5);
+  return clampPrice(withVariance);
+};
+const randomStock = () => Math.floor(Math.random()*60) + 80;
+
+const makeBaseProduct = (bp) => ({
+  name: bp.name,
+  img: bp.img,
+  category: bp.category,
+  expiry: bp.expiry,
+  price: clampPrice(bp.price),
+  stock: bp.stock ?? randomStock()
+});
+
+const makeFolderProduct = (prod) => ({
+  name: prod.name,
+  img: prod.img,
+  category: prod.category,
+  expiry: prod.expiry,
+  price: prod.price ? clampPrice(prod.price) : priceFromUsd(prod.priceUsd),
+  stock: prod.stock ?? randomStock()
+});
+
+const farmerFolderProducts = {
+  1: [
+    { name:'Tomatoes', img:'images/farmer1/product1.jpg', category:'Vegetable', expiry:'5 days', priceUsd:2.0 },
+    { name:'Potatoes', img:'images/farmer1/product2.jpg', category:'Root Vegetable', expiry:'12 days', priceUsd:1.5 },
+    { name:'Greens', img:'images/farmer1/product3.jpg', category:'Leafy Green', expiry:'4 days', priceUsd:1.8 },
+    { name:'Coriander Leaves', img:'images/farmer1/product4.jpg', category:'Herb', expiry:'4 days', priceUsd:3.0 },
+    { name:'Brinjal', img:'images/farmer1/product5.jpg', category:'Vegetable', expiry:'6 days', priceUsd:2.5 },
+    { name:'Carrot', img:'images/farmer1/product6.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:1.2 }
+  ],
+  2: [
+    { name:"Lady's Finger", img:'images/farmer2/product1.jpg', category:'Vegetable', expiry:'5 days', priceUsd:1.0 },
+    { name:'Ginger', img:'images/farmer2/product2.jpg', category:'Spice', expiry:'15 days', priceUsd:2.5 },
+    { name:'Corn', img:'images/farmer2/product3.jpg', category:'Grain', expiry:'12 days', priceUsd:3.0 },
+    { name:'Tomatoes', img:'images/farmer2/product4.jpg', category:'Vegetable', expiry:'5 days', priceUsd:1.7 },
+    { name:'Cabbage', img:'images/farmer2/product5.jpg', category:'Vegetable', expiry:'7 days', priceUsd:2.3 },
+    { name:'Mushroom', img:'images/farmer2/product6.jpg', category:'Fungi', expiry:'4 days', priceUsd:1.5 }
+  ],
+  3: [
+    { name:'Bitterguards', img:'images/farmer3/product1.jpg', category:'Vegetable', expiry:'6 days', priceUsd:5.0 },
+    { name:'Green Chilies', img:'images/farmer3/product2.jpg', category:'Spice', expiry:'7 days', priceUsd:6.0 },
+    { name:'Onions', img:'images/farmer3/product3.jpg', category:'Vegetable', expiry:'14 days', priceUsd:7.0 },
+    { name:'Bananas', img:'images/farmer3/product4.jpg', category:'Fruit', expiry:'5 days', priceUsd:5.0 },
+    { name:'Lemons', img:'images/farmer3/product5.jpg', category:'Fruit', expiry:'10 days', priceUsd:6.0 },
+    { name:'Water Melons', img:'images/farmer3/product6.jpg', category:'Fruit', expiry:'7 days', priceUsd:8.0 }
+  ],
+  4: [
+    { name:'Raddish', img:'images/farmer4/product1.jpg', category:'Root Vegetable', expiry:'7 days', priceUsd:1.5 },
+    { name:'Beetroot', img:'images/farmer4/product2.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:2.0 },
+    { name:'Pumpkin', img:'images/farmer4/product3.jpg', category:'Vegetable', expiry:'12 days', priceUsd:2.5 },
+    { name:'Drum Stick', img:'images/farmer4/product4.jpg', category:'Vegetable', expiry:'8 days', priceUsd:3.0 },
+    { name:'Scarlet Gourds', img:'images/farmer4/product5.jpg', category:'Vegetable', expiry:'6 days', priceUsd:3.5 },
+    { name:'Wheat', img:'images/farmer4/product6.jpg', category:'Grain', expiry:'20 days', priceUsd:4.0 }
+  ],
+  5: [
+    { name:'Carrots', img:'images/farmer5/product1.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:5.0 },
+    { name:'Potatoes', img:'images/farmer5/product2.jpg', category:'Root Vegetable', expiry:'12 days', priceUsd:6.0 },
+    { name:'Peas', img:'images/farmer5/product3.jpg', category:'Vegetable', expiry:'6 days', priceUsd:7.0 },
+    { name:'Watermelons', img:'images/farmer5/product4.jpg', category:'Fruit', expiry:'7 days', priceUsd:3.5 },
+    { name:'Cabbage', img:'images/farmer5/product5.jpg', category:'Vegetable', expiry:'7 days', priceUsd:4.2 },
+    { name:'Mushroom', img:'images/farmer5/product6.jpg', category:'Fungi', expiry:'4 days', priceUsd:5.5 }
+  ],
+  6: [
+    { name:'Cauli Flower', img:'images/farmer6/product1.jpg', category:'Vegetable', expiry:'6 days', priceUsd:8.0 },
+    { name:'Coriander Leaves', img:'images/farmer6/product2.jpg', category:'Herb', expiry:'5 days', priceUsd:9.0 },
+    { name:'Corn', img:'images/farmer6/product3.jpg', category:'Grain', expiry:'12 days', priceUsd:10.0 },
+    { name:'Beetroot', img:'images/farmer6/product4.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:11.0 },
+    { name:'Tomatoes', img:'images/farmer6/product5.jpg', category:'Vegetable', expiry:'5 days', priceUsd:4.0 },
+    { name:'Garlic', img:'images/farmer6/product6.jpg', category:'Spice', expiry:'20 days', priceUsd:12.0 }
+  ],
+  7: [
+    { name:'Greens', img:'images/farmer7/product1.jpg', category:'Leafy Green', expiry:'4 days', priceUsd:3.0 },
+    { name:'Bananas', img:'images/farmer7/product2.jpg', category:'Fruit', expiry:'5 days', priceUsd:3.5 },
+    { name:'Pumpkin', img:'images/farmer7/product3.jpg', category:'Vegetable', expiry:'10 days', priceUsd:6.0 },
+    { name:'Peas', img:'images/farmer7/product4.jpg', category:'Vegetable', expiry:'6 days', priceUsd:5.0 },
+    { name:'Wheat', img:'images/farmer7/product5.jpg', category:'Grain', expiry:'30 days', priceUsd:4.0 },
+    { name:'Sweet Potato', img:'images/farmer7/product6.jpg', category:'Root Vegetable', expiry:'12 days', priceUsd:2.5 }
+  ],
+  8: [
+    { name:'Ginger', img:'images/farmer8/product1.jpg', category:'Spice', expiry:'18 days', priceUsd:3.0 },
+    { name:'Bananas', img:'images/farmer8/product2.jpg', category:'Fruit', expiry:'5 days', priceUsd:2.8 },
+    { name:'Bitter Guard', img:'images/farmer8/product3.jpg', category:'Vegetable', expiry:'6 days', priceUsd:1.5 },
+    { name:'Potatoes', img:'images/farmer8/product4.jpg', category:'Root Vegetable', expiry:'12 days', priceUsd:2.5 },
+    { name:'Scarlet Gourds', img:'images/farmer8/product5.jpg', category:'Vegetable', expiry:'6 days', priceUsd:4.0 },
+    { name:'Onions', img:'images/farmer8/product6.jpg', category:'Vegetable', expiry:'14 days', priceUsd:3.8 }
+  ],
+  9: [
+    { name:'Cauli Flowers', img:'images/farmer9/product1.jpg', category:'Vegetable', expiry:'6 days', priceUsd:2.0 },
+    { name:'Lemons', img:'images/farmer9/product2.jpg', category:'Fruit', expiry:'8 days', priceUsd:1.5 },
+    { name:'Raddish', img:'images/farmer9/product3.jpg', category:'Root Vegetable', expiry:'7 days', priceUsd:1.8 },
+    { name:"Lady's Finger", img:'images/farmer9/product4.jpg', category:'Vegetable', expiry:'5 days', priceUsd:3.0 },
+    { name:'Garlic', img:'images/farmer9/product5.jpg', category:'Spice', expiry:'20 days', priceUsd:2.5 },
+    { name:'Beetroot', img:'images/farmer9/product6.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:1.2 }
+  ],
+  10: [
+    { name:'Brinjal', img:'images/farmer10/product1.jpg', category:'Vegetable', expiry:'6 days', priceUsd:3.5 },
+    { name:'Corn', img:'images/farmer10/product2.jpg', category:'Grain', expiry:'12 days', priceUsd:2.7 },
+    { name:'Cabbage', img:'images/farmer10/product3.jpg', category:'Vegetable', expiry:'7 days', priceUsd:1.9 },
+    { name:'Onions', img:'images/farmer10/product4.jpg', category:'Vegetable', expiry:'14 days', priceUsd:2.2 },
+    { name:'Green Chilies', img:'images/farmer10/product5.jpg', category:'Spice', expiry:'6 days', priceUsd:2.0 },
+    { name:'Drum Sticks', img:'images/farmer10/product6.jpg', category:'Vegetable', expiry:'8 days', priceUsd:2.4 }
+  ]
+};
+
+const farmerDefinitions = [
+  {id:1, name:'John', gender:'M', rating:4.9, location:'Thoothukudi', folder:1},
+  {id:2, name:'Smith', gender:'M', rating:4.9, location:'Tirunelveli', folder:2},
+  {id:3, name:'Charlie', gender:'M', rating:4.8, location:'Trichy', folder:3},
+  {id:4, name:'Periyasami', gender:'M', rating:4.8, location:'Salem', folder:4},
+  {id:5, name:'Chinnasami', gender:'M', rating:4.7, location:'Karur', folder:5},
+  {id:6, name:'Naveen', gender:'M', rating:4.7, location:'Chennai', folder:6},
+  {id:7, name:'Maajida', gender:'F', rating:4.6, location:'Theni', folder:7},
+  {id:8, name:'Muthusami', gender:'M', rating:4.6, location:'Dharmapuri', folder:8},
+  {id:9, name:'Meenakshi', gender:'F', rating:4.5, location:'Madurai', folder:9},
+  {id:10, name:'Parvathy', gender:'F', rating:4.5, location:'Coimbatore', folder:10},
+  {id:11, name:'Rakesh', gender:'M', rating:4.3, location:'Erode', image:'farmer1.jpg', baseProductIds:[1,2,3,4]},
+  {id:12, name:'Kavitha', gender:'F', rating:4.3, location:'Villupuram', image:'farmer2.jpg', baseProductIds:[5,6,7,8]},
+  {id:13, name:'Harish Kumar', gender:'M', rating:4.2, location:'Kanchipuram', image:'farmer3.jpg', baseProductIds:[9,10,11,12]},
+  {id:14, name:'Sneha', gender:'F', rating:4.1, location:'Ariyalur', image:'farmer4.jpg', baseProductIds:[13,14,15,16]},
+  {id:15, name:'Sanjay Patel', gender:'M', rating:4.0, location:'Thiruvannamalai', image:'farmer5.jpg'},
+  {id:16, name:'Divya', gender:'F', rating:3.9, location:'Puducherry', image:'farmer6.jpg'}
+];
+
+function pickBaseProducts(startIndex, count, existingProducts=[]){
+  const takenNames = new Set(existingProducts.map(p => p.name.toLowerCase()));
+  const picks = [];
+  for(let i=0; i<baseProducts.length * 4 && picks.length < count; i++){
+    const bp = baseProducts[(startIndex + i) % baseProducts.length];
+    if(takenNames.has(bp.name.toLowerCase())) continue;
+    takenNames.add(bp.name.toLowerCase());
+    picks.push(makeBaseProduct(bp));
+  }
+  return picks;
+}
+
+const farmers = farmerDefinitions.map((farmerDef, idx) => {
+  const folderItems = farmerDef.folder ? (farmerFolderProducts[farmerDef.folder] || []).map(makeFolderProduct) : [];
+  const ownedBaseProducts = (farmerDef.baseProductIds || []).map(id => {
+    const bp = baseProducts.find(b => b.id === id);
+    return bp ? makeBaseProduct(bp) : null;
+  }).filter(Boolean);
+  const targetCount = farmerDef.folder ? 12 : 8;
+  const productsSoFar = folderItems.concat(ownedBaseProducts);
+  const extraNeeded = Math.max(0, targetCount - productsSoFar.length);
+  const extraProducts = extraNeeded ? pickBaseProducts(idx * 5, extraNeeded, productsSoFar) : [];
+  const products = productsSoFar.concat(extraProducts).map(prod => ({
+    ...prod,
+    farmerName: farmerDef.name,
+    farmerLocation: farmerDef.location
+  }));
+  return {
+    ...farmerDef,
+    img: farmerDef.folder ? `images/farmer${farmerDef.folder}/farmer.jpg` : farmerDef.image,
+    products
+  };
+}).sort((a,b)=>b.rating - a.rating);
+
+const folderProductEntries = farmerDefinitions
+  .filter(fd => fd.folder)
+  .flatMap(fd => {
+    const folderItems = (farmerFolderProducts[fd.folder] || []).map(makeFolderProduct);
+    return folderItems.map(prod => ({
+      ...prod,
+      farmerName: fd.name,
+      farmerLocation: fd.location,
+      farmerImage: `images/farmer${fd.folder}/farmer.jpg`
+    }));
+  });
+
+const baseProductEntries = Object.entries(baseProductOwners).map(([productId, farmerId]) => {
+  const bp = baseProducts.find(b => b.id === Number(productId));
+  const farmer = farmerDefinitions.find(fd => fd.id === farmerId);
+  return {
+    ...makeBaseProduct(bp),
+    farmerName: farmer?.name || 'GreenLink Collective',
+    farmerLocation: farmer?.location || 'Tamil Nadu',
+    farmerImage: farmer?.folder ? `images/farmer${farmer.folder}/farmer.jpg` : farmer?.image
+  };
+});
+
+const allProducts = folderProductEntries
+  .concat(baseProductEntries)
+  .map(prod => ({ ...prod, price: clampPrice(prod.price) }))
+  .sort((a,b) => a.price - b.price);
+
+// ============ RENDER FUNCTIONS ============
+function getProducedDate(){
+  const d = new Date();
+  d.setDate(d.getDate() - Math.floor(Math.random()*3));
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+}
+
+const escapeSingleQuotes = (value = '') => String(value).replace(/'/g, "\\'");
+
+function renderProductCard(p){
+  const safeName = escapeSingleQuotes(p.name);
+  const safeImg = escapeSingleQuotes(p.img);
+  const safeCategory = escapeSingleQuotes(p.category);
+  const safeExpiry = escapeSingleQuotes(p.expiry);
+  const safeFarmer = escapeSingleQuotes(p.farmerName || 'GreenLink Collective');
+  const safeOrigin = escapeSingleQuotes(p.farmerLocation || 'Tamil Nadu');
+  return `<div class="product-card" onclick="openProductModal('${safeName}',${p.price},'${safeImg}','${safeCategory}','${safeExpiry}',${p.stock||Math.floor(Math.random()*50)+10},'${safeFarmer}','${safeOrigin}')">
+    <div class="img" style="background-image:url('${p.img}')"></div>
+    <div class="info">
+      <h3>${p.name}</h3>
+      <div class="price">₹${p.price}<span class="unit"> per kg</span></div>
+      <div class="actions"><button onclick="addProductToCart(event, '${safeName}', ${p.price}, '${safeImg}')">Add to Cart</button></div>
+    </div>
+  </div>`;
+}
+
+function renderFarmerCard(f){
+  const safeName = escapeSingleQuotes(f.name);
+  return `<div class="farmer-card" onclick="goToFarmerPage('${safeName}')">
+    <div class="img" style="background-image:url('${f.img}')"></div>
+    <div class="info">
+      <h3>${f.name}</h3>
+      <div class="rating">
+        <span class="stars">${'★'.repeat(Math.floor(f.rating))}${'☆'.repeat(5-Math.floor(f.rating))}</span>
+        <span class="score">${f.rating}</span>
+      </div>
+      <div class="location">📍 ${f.location}</div>
+      <div class="products-count">${f.products.length} products</div>
+    </div>
+  </div>`;
+}
+
+// ============ BUILD TABS ============
+function buildHome(){
+  // Top 8 products - already sorted low to high, so take last 8 (highest priced) but display them
+  const topProds = [...allProducts].slice(0,8);
+  document.getElementById('topProducts').innerHTML = topProds.map(p => renderProductCard(p)).join('');
+  
+  // Top 8 farmers (already sorted by rating - highest first)
+  document.getElementById('topFarmers').innerHTML = farmers.slice(0,8).map(f => renderFarmerCard(f)).join('');
+}
+
+function buildAllProducts(){
+  // Already sorted low to high price
+  document.getElementById('allProducts').innerHTML = allProducts.map(p => renderProductCard(p)).join('');
+}
+
+function buildAllFarmers(){
+  document.getElementById('allFarmers').innerHTML = farmers.map(f => renderFarmerCard(f)).join('');
+}
+
+function goToFarmerPage(name){
+  const farmer = farmers.find(f => f.name === name);
+  if(typeof localStorage !== 'undefined'){
+    try {
+      localStorage.setItem('glc_selected_farmer', JSON.stringify(farmer || null));
+      localStorage.setItem('glc_farmers_cache', JSON.stringify(farmers));
+    } catch (err) {
+      console.warn('Unable to cache farmer selection', err);
+    }
+  }
+  window.location.href = `farmer_products.html?farmer=${encodeURIComponent(name)}`;
+}
+
+// ============ TABS NAVIGATION ============
+document.querySelectorAll('.nav-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(tc => {
+      tc.classList.toggle('active', tc.id === 'tab-' + tab.dataset.tab);
+    });
+  });
+});
+
+// ============ SEARCH ============
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const q = e.target.value.toLowerCase().trim();
+  const results = document.getElementById('searchResults');
+  if(!q){
+    results.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">Type to search...</div>';
+    return;
+  }
+  let html = '';
+  allProducts.filter(p => p.name.toLowerCase().includes(q)).slice(0,12).forEach(p => { html += renderProductCard(p); });
+  farmers.filter(f => f.name.toLowerCase().includes(q) || f.location.toLowerCase().includes(q)).slice(0,4).forEach(f => { html += renderFarmerCard(f); });
+  results.innerHTML = html || '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">No results</div>';
+});
+
+// ============ PRODUCT MODAL ============
+let currentProduct = null;
+function openProductModal(name, price, img, category, expiry, stock, farmerName, farmerOrigin){
+  currentProduct = {name, price, img};
+  document.getElementById('modalProductImg').style.backgroundImage = `url('${img}')`;
+  document.getElementById('modalProductName').textContent = name;
+  document.getElementById('modalProductPrice').textContent = `₹${price} per kg`;
+  document.getElementById('modalProducedDate').textContent = getProducedDate();
+  document.getElementById('modalExpiryPeriod').textContent = expiry;
+  document.getElementById('modalCategory').textContent = category;
+  document.getElementById('modalStock').textContent = `${stock} kg`;
+  document.getElementById('modalFarmerSource').textContent = farmerName || 'GreenLink Collective';
+  document.getElementById('modalFarmerOrigin').textContent = farmerOrigin || 'Tamil Nadu';
+  document.getElementById('productModal').classList.add('show');
+}
+function closeProductModal(){ document.getElementById('productModal').classList.remove('show'); }
+document.getElementById('productModal').addEventListener('click', (e) => { if(e.target.id === 'productModal') closeProductModal(); });
+document.getElementById('modalAddBtn').addEventListener('click', () => {
+  if(currentProduct) addToCart(currentProduct.name, currentProduct.price, currentProduct.img);
+  closeProductModal();
+});
+
+// ============ FARMER MODAL ============
+function openFarmerModal(farmerId){
+  const farmer = farmers.find(f => f.id === farmerId);
+  if(!farmer) return;
+  document.getElementById('modalFarmerImg').src = farmer.img;
+  document.getElementById('modalFarmerName').textContent = farmer.name;
+  document.getElementById('modalFarmerRating').textContent = farmer.rating;
+  document.getElementById('modalFarmerLocation').textContent = farmer.location;
+  document.getElementById('modalProducts').innerHTML = farmer.products.map(p => renderProductCard(p)).join('');
+  document.getElementById('farmerModal').classList.add('show');
+}
+function closeFarmerModal(){ document.getElementById('farmerModal').classList.remove('show'); }
+document.getElementById('farmerModal').addEventListener('click', (e) => { if(e.target.id === 'farmerModal') closeFarmerModal(); });
+
+// ============ CART ============
+function addProductToCart(event, name, price, img){
+  if(event) event.stopPropagation();
+  addToCart(name, price, img);
+}
+async function addToCart(name, price, img){
+  try {
+    const res = await fetch('/api/cart', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      credentials: 'include',
+      body: JSON.stringify({ product: name, farmer: 'Market', price, image: img || '' })
+    });
+    if(res.ok) alert(`Added ${name} to cart!`);
+  } catch(e){ alert('Added to cart!'); }
+}
+// ============ INIT ============
+buildHome();
+buildAllProducts();
+buildAllFarmers();
+document.getElementById('searchResults').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">Type to search...</div>';
+if(typeof localStorage !== 'undefined'){
+  try {
+    localStorage.setItem('glc_farmers_cache', JSON.stringify(farmers));
+    localStorage.setItem('glc_all_products', JSON.stringify(allProducts));
+  } catch (err) {
+    console.warn('Unable to cache farmer data', err);
+  }
+}
+</script>
+</body>
+</html>

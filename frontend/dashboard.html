@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f5f7f5; }
+    .loading { text-align: center; color: #666; }
+    .loading h2 { color: #2e7d32; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <h2>🌿 GreenLink</h2>
+    <p>Redirecting to your dashboard...</p>
+  </div>
+  <script>
+    (async function(){
+      try {
+        const res = await fetch('/api/session');
+        const session = await res.json();
+        if(!session.loggedIn){
+          window.location.href = 'signin.html';
+          return;
+        }
+        if(session.role === 'farmer'){
+          window.location.href = 'farmer_dashboard.html';
+        } else if(session.role === 'shop'){
+          window.location.href = 'shop_dashboard.html';
+        } else {
+          window.location.href = 'index1.html';
+        }
+      } catch(e){
+        window.location.href = 'signin.html';
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff7f2a"/>
+      <stop offset="100%" stop-color="#ff5400"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" fill="#fff3e6"/>
+  <g stroke="#8c3d00" stroke-width="3" fill="url(#g)" stroke-linejoin="round">
+    <path d="M60 15c6 10 10 18 12 26 2 8 2 16 0 24-2 8-6 18-12 32-6-14-10-24-12-32-2-8-2-16 0-24 2-8 6-16 12-26z"/>
+    <path d="M48 40l24 0" stroke="#ffbf80" stroke-width="4" stroke-linecap="round"/>
+    <path d="M50 52l20 0" stroke="#ffbf80" stroke-width="4" stroke-linecap="round"/>
+    <path d="M52 64l16 0" stroke="#ffbf80" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <text x="60" y="110" font-size="14" text-anchor="middle" fill="#c44">Carrot</text>
+</svg>

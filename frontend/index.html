@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenLink Commerce</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2e7d32;
+      --primary-dark: #1b5e20;
+      --primary-light: #4caf50;
+      --accent: #ff9800;
+      --bg: #f5f7f5;
+      --surface: #ffffff;
+      --text: #1a2e1a;
+      --muted: #5d6b5d;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(27, 94, 32, 0.9)),
+                  url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1600') center/cover;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .logo h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .logo span {
+      color: var(--accent);
+    }
+    
+    /* Hero Content */
+    .hero-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 20px;
+      color: #fff;
+    }
+    .hero-content h2 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 800;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    .hero-content h2 span {
+      color: var(--accent);
+    }
+    .hero-content p {
+      font-size: 18px;
+      max-width: 700px;
+      line-height: 1.7;
+      opacity: 0.95;
+      margin-bottom: 40px;
+    }
+    
+    /* Role Cards */
+    .roles-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1000px;
+      width: 100%;
+      padding: 0 20px;
+    }
+    .role-card {
+      background: var(--surface);
+      border-radius: 20px;
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .role-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .role-card .card-img {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .role-card .card-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
+    }
+    .role-card .card-icon {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      z-index: 10;
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+    }
+    .role-card .card-body {
+      padding: 45px 24px 24px;
+      text-align: center;
+    }
+    .role-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--primary-dark);
+    }
+    .role-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .role-card .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .role-card:hover .btn {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+    
+    /* Features Section */
+    .features {
+      padding: 80px 20px;
+      background: #fff;
+    }
+    .features-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 50px;
+      color: var(--primary-dark);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+    }
+    .feature-item {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 16px;
+      background: var(--bg);
+      transition: all 0.3s;
+    }
+    .feature-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .feature-item .icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+      color: #fff;
+    }
+    .feature-item h4 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .feature-item p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    
+    /* Footer */
+    .footer {
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 50px 20px 30px;
+    }
+    .footer-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+    .footer-brand h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .footer-brand p {
+      opacity: 0.8;
+      font-size: 14px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 15px;
+    }
+    .footer-social a {
+      width: 45px;
+      height: 45px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+    .footer-social a:hover {
+      background: var(--accent);
+      transform: translateY(-3px);
+    }
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      margin-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 14px;
+      opacity: 0.7;
+    }
+    
+    @media (max-width: 900px) {
+      .roles-container { grid-template-columns: 1fr; max-width: 400px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .header { padding: 15px 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .footer-content { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero">
+    <header class="header">
+      <a href="#" class="logo">
+        <div class="logo-icon">🌿</div>
+        <h1>Green <span>Link</span> Commerce</h1>
+      </a>
+    </header>
+    
+    <div class="hero-content">
+      <h2>🌿 <span>Green Link</span> Commerce</h2>
+      <p>Connecting farmers, shopkeepers, and customers in one seamless platform. 
+         Get farm-fresh produce at fair prices while supporting local agriculture and sustainability.</p>
+      
+      <div class="roles-container">
+        <a href="signin.html" class="role-card">
+          <div class="card-img" style="background-image: url('GLC2.jpg')">
+            <div class="card-icon">🌾</div>
+          </div>
+          <div class="card-body">
+            <h3>Farmer</h3>
+            <p>List your fresh crops, set fair prices, and sell directly to shops and customers. Grow your business!</p>
+            <span class="btn">Start Selling</span>
+          </div>
+        </a>
+        
+        <a href="signin1.html" class="role-card">
+          <div class="card-img" style="background-image: url('GLC3.jpg')">
+            <div class="card-icon">🏪</div>
+          </div>
+          <div class="card-body">
+            <h3>Shop Owner</h3>
+            <p>Source fresh produce from local farmers at great prices. Stock your shop with quality goods!</p>
+            <span class="btn">Manage Shop</span>
+          </div>
+        </a>
+        
+        <a href="signin2.html" class="role-card">
+          <div class="card-img" style="background-image: url('https://www.tasteofhome.com/wp-content/uploads/2019/06/millennial-young-woman-buying-fresh-vegetables-shutterstock_593486516.jpg')">
+            <div class="card-icon">🛒</div>
+          </div>
+          <div class="card-body">
+            <h3>Customer</h3>
+            <p>Browse fresh products from local shops. Enjoy quality produce delivered to your doorstep!</p>
+            <span class="btn">Start Shopping</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Features Section -->
+  <section class="features">
+    <div class="features-container">
+      <h2>Why Choose GreenLink?</h2>
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="icon"><i class="fas fa-leaf"></i></div>
+          <h4>100% Fresh</h4>
+          <p>Farm-fresh produce delivered directly from local farms</p>
+        </div>
+        <div class="feature-item">
+          <div class="icon"><i class="fas fa-handshake"></i></div>
+          <h4>Fair Prices</h4>
+          <p>No middlemen means better prices for everyone</p>
+        </div>
+        <div class="feature-item">
+          <div class="icon"><i class="fas fa-truck"></i></div>
+          <h4>Fast Delivery</h4>
+          <p>Quick and reliable delivery to your doorstep</p>
+        </div>
+        <div class="feature-item">
+          <div class="icon"><i class="fas fa-shield-alt"></i></div>
+          <h4>Secure Payments</h4>
+          <p>Safe and secure transaction process</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>🌿 GreenLink Commerce</h3>
+        <p>Connecting Farmers, Shops & Customers</p>
+      </div>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 GreenLink Commerce. All Rights Reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

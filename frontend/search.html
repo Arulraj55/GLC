@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search</title>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header" style="justify-content:center;">
+      <div class="brand">Search</div>
+    </header>
+    <main class="main">
+      <div class="form" style="max-width:560px; margin:0 auto 1.25rem;">
+        <div class="field">
+          <label>Find Product or Shop</label>
+          <input type="text" id="searchInput" placeholder="Type e.g. Carrot, Organic Fresh..." oninput="filterResults()" />
+        </div>
+      </div>
+      <div class="grid cols-4" id="resultsContainer"></div>
+    </main>
+    <nav class="footer-nav">
+      <a href="index1.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="search.html" class="active">Search</a>
+      <a href="cart.html">Cart</a>
+    </nav>
+  </div>
+  <script>
+    const data = [
+      // Products
+      { type: 'product', name: 'Carrot', img: 'product1.jpg' },
+      { type: 'product', name: 'Tomato', img: 'product2.jpg' },
+      { type: 'product', name: 'Potato', img: 'product3.jpg' },
+      { type: 'product', name: 'Corn', img: 'product4.jpg' },
+      { type: 'product', name: 'Cucumber', img: 'product5.jpg' },
+      { type: 'product', name: 'Onion', img: 'product6.jpg' },
+      { type: 'product', name: 'Garlic', img: 'product7.jpg' },
+      { type: 'product', name: 'Lettuce', img: 'product8.jpg' },
+      { type: 'product', name: 'Bell Pepper', img: 'product9.jpg' },
+      { type: 'product', name: 'Broccoli', img: 'product10.jpg' },
+      { type: 'product', name: 'Eggplant', img: 'product11.jpg' },
+      { type: 'product', name: 'Green Pepper', img: 'product12.jpg' },
+      { type: 'product', name: 'Spinach', img: 'product13.jpg' },
+      { type: 'product', name: 'Beetroot', img: 'product14.jpg' },
+      { type: 'product', name: 'Coriander', img: 'product15.jpg' },
+      { type: 'product', name: 'Cabbage', img: 'product16.jpg' },
+
+      // Shops
+      { type: 'shop', name: 'Alimentation Generale', img: 'shop1.jpg' },
+      { type: 'shop', name: 'Organic Fresh', img: 'shop2.jpg' },
+      { type: 'shop', name: 'Health & Happiness', img: 'shop3.jpg' },
+      { type: 'shop', name: 'Freshest and Finest', img: 'shop4.jpg' },
+      { type: 'shop', name: 'Fresh & Ready', img: 'shop5.jpg' },
+      { type: 'shop', name: 'Beverages', img: 'shop6.jpg' },
+      { type: 'shop', name: 'Organic Produce', img: 'shop7.jpg' },
+      { type: 'shop', name: 'Fresh Foods', img: 'shop8.jpg' }
+    ];
+
+    function filterResults() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = '';
+      if (!input.trim()) return;
+      const filtered = data.filter(item => item.name.toLowerCase().includes(input));
+      container.innerHTML = filtered.map(item => `
+        <div class='card'>
+          <div class='media' style="background-image:url('${item.img}')"></div>
+          <div class='content'>
+            <strong>${item.name}</strong>
+            <span style='font-size:.65rem; opacity:.6;'>${item.type === 'product' ? 'Product' : 'Shop'}</span>
+            <div class='actions'>
+              ${item.type === 'product' ? `<button class='button' onclick="goTo('${item.name}')">View</button>` : ''}
+            </div>
+          </div>
+        </div>`).join('');
+    }
+    function goTo(name){
+      location.href = `product_farmers.html?product=${encodeURIComponent(name)}`;
+    }
+  </script>
+</body>
+</html>

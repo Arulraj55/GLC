@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GreenLink Shop</title>
+  <style>
+    :root { --primary:#1565c0; --primary-dark:#0d47a1; --accent:#ff9800; --bg:#f5f7fa; --surface:#fff; --text:#1a2433; --muted:#5d6b7a; --radius:16px; --shadow:0 4px 20px rgba(0,0,0,.08); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:75px; }
+    
+    .header { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; padding:20px; position:sticky; top:0; z-index:50; }
+    .header h1 { font-size:22px; font-weight:700; display:flex; align-items:center; gap:10px; }
+    .header .cart-btn { position:absolute; right:20px; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.2); border:none; color:#fff; padding:10px 16px; border-radius:12px; font-weight:600; cursor:pointer; backdrop-filter:blur(10px); }
+    
+    .tab-content { display:none; padding:20px; max-width:1000px; margin:0 auto; }
+    .tab-content.active { display:block; }
+    
+    .section-title { font-size:20px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+    .section-title span { font-size:24px; }
+    
+    /* 4 items per row max - same size cards */
+    .products-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px; }
+    .product-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; transition:.3s; }
+    .product-card:hover { transform:translateY(-6px); box-shadow:0 12px 40px rgba(0,0,0,.15); }
+    .product-card .img { width:100%; aspect-ratio:4/3; background:#e3f2fd center/cover no-repeat; }
+    .product-card .info { padding:12px; }
+    .product-card h3 { font-size:14px; font-weight:600; margin-bottom:4px; line-height:1.2; }
+    .product-card .price { font-size:16px; font-weight:800; color:var(--primary); }
+    .product-card .unit { font-size:11px; color:var(--muted); font-weight:normal; }
+    .product-card .actions { margin-top:10px; }
+    .product-card .actions button { width:100%; padding:8px 10px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-size:12px; font-weight:600; cursor:pointer; transition:.2s; }
+    .product-card .actions button:hover { background:var(--primary-dark); }
+    
+    .shops-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:30px; }
+    .shop-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; transition:.3s; }
+    .shop-card:hover { transform:translateY(-6px); box-shadow:0 12px 40px rgba(0,0,0,.15); }
+    .shop-card .img { width:100%; aspect-ratio:4/3; background:#e3f2fd center/cover no-repeat; }
+    .shop-card .info { padding:14px; }
+    .shop-card h3 { font-size:15px; font-weight:700; color:var(--primary); margin-bottom:6px; }
+    .shop-card .rating { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .shop-card .rating .stars { color:var(--accent); font-size:14px; }
+    .shop-card .rating .score { font-weight:700; font-size:14px; }
+    .shop-card .location { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:4px; }
+    .shop-card .products-count { font-size:11px; color:var(--muted); margin-top:6px; padding-top:8px; border-top:1px solid #eee; }
+    
+    .search-box { background:var(--surface); padding:16px; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:20px; }
+    .search-box input { width:100%; padding:14px 20px; border:2px solid #e0e0e0; border-radius:12px; font-size:16px; transition:.2s; }
+    .search-box input:focus { outline:none; border-color:var(--primary); }
+    
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:var(--surface); display:flex; box-shadow:0 -4px 20px rgba(0,0,0,.1); z-index:100; }
+    .bottom-nav .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 8px; text-decoration:none; color:var(--muted); font-size:11px; font-weight:600; transition:.2s; cursor:pointer; border:none; background:none; position:relative; }
+    .bottom-nav .nav-item.active { color:var(--primary); }
+    .bottom-nav .nav-item.active::before { content:''; position:absolute; top:0; width:40px; height:3px; background:var(--primary); border-radius:0 0 4px 4px; }
+    .bottom-nav .nav-item .icon { font-size:22px; margin-bottom:4px; }
+    
+    /* Product Detail Modal */
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:200; align-items:center; justify-content:center; }
+    .modal.show { display:flex; }
+    .modal-content { background:var(--surface); width:90%; max-width:450px; border-radius:20px; overflow:hidden; animation:popIn .3s ease; }
+    @keyframes popIn { from{transform:scale(.9);opacity:0} to{transform:scale(1);opacity:1} }
+    .modal-img { width:100%; aspect-ratio:4/3; background:#e3f2fd center/cover no-repeat; }
+    .modal-body { padding:24px; }
+    .modal-body h2 { font-size:22px; margin-bottom:12px; color:var(--primary); }
+    .modal-body .price-big { font-size:28px; font-weight:800; color:var(--primary); margin-bottom:16px; }
+    .modal-body .details { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+    .modal-body .detail-item { background:#f5f7fa; padding:12px; border-radius:10px; }
+    .modal-body .detail-item .label { font-size:11px; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
+    .modal-body .detail-item .value { font-size:14px; font-weight:600; }
+    .modal-actions { display:flex; gap:12px; }
+    .modal-actions button { flex:1; padding:14px; border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; transition:.2s; }
+    .modal-actions .close-btn { background:#f5f5f5; color:var(--text); }
+    .modal-actions .add-btn { background:var(--primary); color:#fff; }
+    .modal-actions .add-btn:hover { background:var(--primary-dark); }
+    
+    /* Shop Modal */
+    .shop-modal-content { background:var(--surface); width:100%; max-width:600px; max-height:85vh; border-radius:24px 24px 0 0; overflow-y:auto; animation:slideUp .3s ease; }
+    @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .shop-modal-header { padding:20px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:16px; position:sticky; top:0; background:var(--surface); }
+    .shop-modal-header .shop-img { width:70px; height:70px; border-radius:50%; object-fit:cover; }
+    .shop-modal-header .shop-info h2 { font-size:20px; margin-bottom:4px; }
+    .shop-modal-header .close-btn { position:absolute; right:16px; top:16px; background:none; border:none; font-size:28px; cursor:pointer; color:var(--muted); }
+    .shop-modal-products { padding:20px; display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    
+    @media(max-width:800px){ .products-grid,.shops-grid{grid-template-columns:repeat(2,1fr);} .shop-modal-products{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:480px){ .products-grid,.shops-grid{grid-template-columns:repeat(2,1fr);} }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>🏪 GreenLink Shop</h1>
+    <div style="display:flex;gap:10px;">
+      <button class="cart-btn" onclick="location.href='my_orders.html'" style="background:#8b5cf6;">📦 Orders</button>
+      <button class="cart-btn" onclick="location.href='cart.html'">🛒 Cart</button>
+    </div>
+  </header>
+
+  <!-- HOME TAB -->
+  <div class="tab-content active" id="tab-home">
+    <div class="section-title"><span>🏆</span> Top Products</div>
+    <div class="products-grid" id="topProducts"></div>
+    <div class="section-title"><span>⭐</span> Top Shops</div>
+    <div class="shops-grid" id="topShops"></div>
+  </div>
+
+  <!-- ALL SHOPS TAB -->
+  <div class="tab-content" id="tab-shops">
+    <div class="section-title"><span>🏪</span> All Shops</div>
+    <div class="shops-grid" id="allShops"></div>
+  </div>
+
+  <!-- ALL PRODUCTS TAB -->
+  <div class="tab-content" id="tab-products">
+    <div class="section-title"><span>🥬</span> All Products</div>
+    <div class="products-grid" id="allProducts"></div>
+  </div>
+
+  <!-- SEARCH TAB -->
+  <div class="tab-content" id="tab-search">
+    <div class="section-title"><span>🔍</span> Search</div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search products or shops..." />
+    </div>
+    <div class="products-grid" id="searchResults"></div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="home"><span class="icon">🏠</span>Home</button>
+    <button class="nav-item" data-tab="shops"><span class="icon">🏪</span>All Shops</button>
+    <button class="nav-item" data-tab="products"><span class="icon">🥬</span>All Products</button>
+    <button class="nav-item" data-tab="search"><span class="icon">🔍</span>Search</button>
+  </nav>
+
+  <!-- Product Detail Modal -->
+  <div class="modal" id="productModal">
+    <div class="modal-content">
+      <div class="modal-img" id="modalProductImg"></div>
+      <div class="modal-body">
+        <h2 id="modalProductName"></h2>
+        <div class="price-big" id="modalProductPrice"></div>
+        <div class="details">
+          <div class="detail-item"><div class="label">Produced Date</div><div class="value" id="modalProducedDate"></div></div>
+          <div class="detail-item"><div class="label">Expiry Period</div><div class="value" id="modalExpiryPeriod"></div></div>
+          <div class="detail-item"><div class="label">Category</div><div class="value" id="modalCategory"></div></div>
+          <div class="detail-item"><div class="label">Stock</div><div class="value" id="modalStock"></div></div>
+          <div class="detail-item"><div class="label">Shop</div><div class="value" id="modalShopSource"></div></div>
+          <div class="detail-item"><div class="label">Location</div><div class="value" id="modalShopLocation"></div></div>
+        </div>
+        <div class="modal-actions">
+          <button class="close-btn" onclick="closeProductModal()">Close</button>
+          <button class="add-btn" id="modalAddBtn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shop Products Modal -->
+  <div class="modal" id="shopModal" style="align-items:flex-end;">
+    <div class="shop-modal-content">
+      <div class="shop-modal-header">
+        <img class="shop-img" id="modalShopImg" src="" alt="Shop" />
+        <div class="shop-info">
+          <h2 id="modalShopName"></h2>
+          <div class="rating"><span class="stars">★★★★★</span><span class="score" id="modalShopRating"></span></div>
+          <div class="location">📍 <span id="modalShopLocation2"></span></div>
+        </div>
+        <button class="close-btn" onclick="closeShopModal()">&times;</button>
+      </div>
+      <div class="shop-modal-products" id="modalProducts"></div>
+    </div>
+  </div>
+
+<script>
+// ============ DATA ============
+// 16 base products
+const baseProducts = [
+  {id:1, name:'Carrot', img:'product1.jpg', category:'Root Vegetable', expiry:'7 days', price:36},
+  {id:2, name:'Tomato', img:'product2.jpg', category:'Vegetable', expiry:'5 days', price:44},
+  {id:3, name:'Potato', img:'product3.jpg', category:'Root Vegetable', expiry:'14 days', price:32},
+  {id:4, name:'Corn', img:'product4.jpg', category:'Grain', expiry:'10 days', price:52},
+  {id:5, name:'Cucumber', img:'product5.jpg', category:'Vegetable', expiry:'5 days', price:40},
+  {id:6, name:'Onion', img:'product6.jpg', category:'Vegetable', expiry:'21 days', price:30},
+  {id:7, name:'Garlic', img:'product7.jpg', category:'Spice', expiry:'30 days', price:90},
+  {id:8, name:'Lettuce', img:'product8.jpg', category:'Leafy Green', expiry:'4 days', price:48},
+  {id:9, name:'Bell Pepper', img:'product9.jpg', category:'Vegetable', expiry:'7 days', price:70},
+  {id:10, name:'Broccoli', img:'product10.jpg', category:'Vegetable', expiry:'5 days', price:82},
+  {id:11, name:'Eggplant', img:'product11.jpg', category:'Vegetable', expiry:'7 days', price:64},
+  {id:12, name:'Green Pepper', img:'product12.jpg', category:'Vegetable', expiry:'7 days', price:60},
+  {id:13, name:'Spinach', img:'product13.jpg', category:'Leafy Green', expiry:'3 days', price:58},
+  {id:14, name:'Beetroot', img:'product14.jpg', category:'Root Vegetable', expiry:'14 days', price:72},
+  {id:15, name:'Coriander', img:'product15.jpg', category:'Herb', expiry:'5 days', price:55},
+  {id:16, name:'Cabbage', img:'product16.jpg', category:'Vegetable', expiry:'10 days', price:45}
+];
+
+const clampPrice = (value = 20) => {
+  if(Number.isNaN(value)) return 40;
+  return Math.min(150, Math.max(20, Math.round(value)));
+};
+const priceFromUsd = (usd = 1.5) => {
+  const base = usd * 40;
+  const withVariance = base + (Math.random() * 10 - 5);
+  return clampPrice(withVariance);
+};
+const randomStock = () => Math.floor(Math.random()*60) + 80;
+
+const makeBaseProduct = (bp) => ({
+  name: bp.name,
+  img: bp.img,
+  category: bp.category,
+  expiry: bp.expiry,
+  price: clampPrice(bp.price),
+  stock: bp.stock ?? randomStock()
+});
+
+const makeFolderProduct = (prod) => ({
+  name: prod.name,
+  img: prod.img,
+  category: prod.category,
+  expiry: prod.expiry,
+  price: prod.price ? clampPrice(prod.price) : priceFromUsd(prod.priceUsd),
+  stock: prod.stock ?? randomStock()
+});
+
+// Folder products (same as farmer data, now used for shops 1-10)
+const shopFolderProducts = {
+  1: [
+    { name:'Tomatoes', img:'images/farmer1/product1.jpg', category:'Vegetable', expiry:'5 days', priceUsd:2.0 },
+    { name:'Potatoes', img:'images/farmer1/product2.jpg', category:'Root Vegetable', expiry:'12 days', priceUsd:1.5 },
+    { name:'Greens', img:'images/farmer1/product3.jpg', category:'Leafy Green', expiry:'4 days', priceUsd:1.8 },
+    { name:'Coriander Leaves', img:'images/farmer1/product4.jpg', category:'Herb', expiry:'4 days', priceUsd:3.0 },
+    { name:'Brinjal', img:'images/farmer1/product5.jpg', category:'Vegetable', expiry:'6 days', priceUsd:2.5 },
+    { name:'Carrot', img:'images/farmer1/product6.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:1.2 }
+  ],
+  2: [
+    { name:"Lady's Finger", img:'images/farmer2/product1.jpg', category:'Vegetable', expiry:'5 days', priceUsd:1.0 },
+    { name:'Ginger', img:'images/farmer2/product2.jpg', category:'Spice', expiry:'15 days', priceUsd:2.5 },
+    { name:'Corn', img:'images/farmer2/product3.jpg', category:'Grain', expiry:'12 days', priceUsd:3.0 },
+    { name:'Tomatoes', img:'images/farmer2/product4.jpg', category:'Vegetable', expiry:'5 days', priceUsd:1.7 },
+    { name:'Cabbage', img:'images/farmer2/product5.jpg', category:'Vegetable', expiry:'7 days', priceUsd:2.3 },
+    { name:'Mushroom', img:'images/farmer2/product6.jpg', category:'Fungi', expiry:'4 days', priceUsd:1.5 }
+  ],
+  3: [
+    { name:'Bitterguards', img:'images/farmer3/product1.jpg', category:'Vegetable', expiry:'6 days', priceUsd:5.0 },
+    { name:'Green Chilies', img:'images/farmer3/product2.jpg', category:'Spice', expiry:'7 days', priceUsd:6.0 },
+    { name:'Onions', img:'images/farmer3/product3.jpg', category:'Vegetable', expiry:'14 days', priceUsd:7.0 },
+    { name:'Bananas', img:'images/farmer3/product4.jpg', category:'Fruit', expiry:'5 days', priceUsd:5.0 },
+    { name:'Lemons', img:'images/farmer3/product5.jpg', category:'Fruit', expiry:'10 days', priceUsd:6.0 },
+    { name:'Water Melons', img:'images/farmer3/product6.jpg', category:'Fruit', expiry:'7 days', priceUsd:8.0 }
+  ],
+  4: [
+    { name:'Raddish', img:'images/farmer4/product1.jpg', category:'Root Vegetable', expiry:'7 days', priceUsd:1.5 },
+    { name:'Beetroot', img:'images/farmer4/product2.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:2.0 },
+    { name:'Pumpkin', img:'images/farmer4/product3.jpg', category:'Vegetable', expiry:'12 days', priceUsd:2.5 },
+    { name:'Drum Stick', img:'images/farmer4/product4.jpg', category:'Vegetable', expiry:'8 days', priceUsd:3.0 },
+    { name:'Scarlet Gourds', img:'images/farmer4/product5.jpg', category:'Vegetable', expiry:'6 days', priceUsd:3.5 },
+    { name:'Wheat', img:'images/farmer4/product6.jpg', category:'Grain', expiry:'20 days', priceUsd:4.0 }
+  ],
+  5: [
+    { name:'Carrots', img:'images/farmer5/product1.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:5.0 },
+    { name:'Potatoes', img:'images/farmer5/product2.jpg', category:'Root Vegetable', expiry:'12 days', priceUsd:6.0 },
+    { name:'Peas', img:'images/farmer5/product3.jpg', category:'Vegetable', expiry:'6 days', priceUsd:7.0 },
+    { name:'Watermelons', img:'images/farmer5/product4.jpg', category:'Fruit', expiry:'7 days', priceUsd:3.5 },
+    { name:'Cabbage', img:'images/farmer5/product5.jpg', category:'Vegetable', expiry:'7 days', priceUsd:4.2 },
+    { name:'Mushroom', img:'images/farmer5/product6.jpg', category:'Fungi', expiry:'4 days', priceUsd:5.5 }
+  ],
+  6: [
+    { name:'Cauli Flower', img:'images/farmer6/product1.jpg', category:'Vegetable', expiry:'6 days', priceUsd:8.0 },
+    { name:'Coriander Leaves', img:'images/farmer6/product2.jpg', category:'Herb', expiry:'5 days', priceUsd:9.0 },
+    { name:'Corn', img:'images/farmer6/product3.jpg', category:'Grain', expiry:'12 days', priceUsd:10.0 },
+    { name:'Beetroot', img:'images/farmer6/product4.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:11.0 },
+    { name:'Tomatoes', img:'images/farmer6/product5.jpg', category:'Vegetable', expiry:'5 days', priceUsd:4.0 },
+    { name:'Garlic', img:'images/farmer6/product6.jpg', category:'Spice', expiry:'20 days', priceUsd:12.0 }
+  ],
+  7: [
+    { name:'Greens', img:'images/farmer7/product1.jpg', category:'Leafy Green', expiry:'4 days', priceUsd:3.0 },
+    { name:'Bananas', img:'images/farmer7/product2.jpg', category:'Fruit', expiry:'5 days', priceUsd:3.5 },
+    { name:'Pumpkin', img:'images/farmer7/product3.jpg', category:'Vegetable', expiry:'10 days', priceUsd:6.0 },
+    { name:'Peas', img:'images/farmer7/product4.jpg', category:'Vegetable', expiry:'6 days', priceUsd:5.0 },
+    { name:'Wheat', img:'images/farmer7/product5.jpg', category:'Grain', expiry:'30 days', priceUsd:4.0 },
+    { name:'Sweet Potato', img:'images/farmer7/product6.jpg', category:'Root Vegetable', expiry:'12 days', priceUsd:2.5 }
+  ],
+  8: [
+    { name:'Ginger', img:'images/farmer8/product1.jpg', category:'Spice', expiry:'18 days', priceUsd:3.0 },
+    { name:'Bananas', img:'images/farmer8/product2.jpg', category:'Fruit', expiry:'5 days', priceUsd:2.8 },
+    { name:'Bitter Guard', img:'images/farmer8/product3.jpg', category:'Vegetable', expiry:'6 days', priceUsd:1.5 },
+    { name:'Potatoes', img:'images/farmer8/product4.jpg', category:'Root Vegetable', expiry:'12 days', priceUsd:2.5 },
+    { name:'Scarlet Gourds', img:'images/farmer8/product5.jpg', category:'Vegetable', expiry:'6 days', priceUsd:4.0 },
+    { name:'Onions', img:'images/farmer8/product6.jpg', category:'Vegetable', expiry:'14 days', priceUsd:3.8 }
+  ],
+  9: [
+    { name:'Cauli Flowers', img:'images/farmer9/product1.jpg', category:'Vegetable', expiry:'6 days', priceUsd:2.0 },
+    { name:'Lemons', img:'images/farmer9/product2.jpg', category:'Fruit', expiry:'8 days', priceUsd:1.5 },
+    { name:'Raddish', img:'images/farmer9/product3.jpg', category:'Root Vegetable', expiry:'7 days', priceUsd:1.8 },
+    { name:"Lady's Finger", img:'images/farmer9/product4.jpg', category:'Vegetable', expiry:'5 days', priceUsd:3.0 },
+    { name:'Garlic', img:'images/farmer9/product5.jpg', category:'Spice', expiry:'20 days', priceUsd:2.5 },
+    { name:'Beetroot', img:'images/farmer9/product6.jpg', category:'Root Vegetable', expiry:'10 days', priceUsd:1.2 }
+  ],
+  10: [
+    { name:'Brinjal', img:'images/farmer10/product1.jpg', category:'Vegetable', expiry:'6 days', priceUsd:3.5 },
+    { name:'Corn', img:'images/farmer10/product2.jpg', category:'Grain', expiry:'12 days', priceUsd:2.7 },
+    { name:'Cabbage', img:'images/farmer10/product3.jpg', category:'Vegetable', expiry:'7 days', priceUsd:1.9 },
+    { name:'Onions', img:'images/farmer10/product4.jpg', category:'Vegetable', expiry:'14 days', priceUsd:2.2 },
+    { name:'Green Chilies', img:'images/farmer10/product5.jpg', category:'Spice', expiry:'6 days', priceUsd:2.0 },
+    { name:'Drum Sticks', img:'images/farmer10/product6.jpg', category:'Vegetable', expiry:'8 days', priceUsd:2.4 }
+  ]
+};
+
+// 16 shops: 1-10 have folders (12 products each), 11-16 get 8 products from base
+const shopDefinitions = [
+  {id:1, name:'Fresh Mart', rating:4.9, location:'Thoothukudi', folder:1, image:'shop1.jpg'},
+  {id:2, name:'Green Basket', rating:4.9, location:'Tirunelveli', folder:2, image:'shop2.jpg'},
+  {id:3, name:'Organic World', rating:4.8, location:'Trichy', folder:3, image:'shop3.jpg'},
+  {id:4, name:'Farm Fresh', rating:4.8, location:'Salem', folder:4, image:'shop4.jpg'},
+  {id:5, name:'Veggie Hub', rating:4.7, location:'Karur', folder:5, image:'shop5.jpg'},
+  {id:6, name:'Nature Store', rating:4.7, location:'Chennai', folder:6, image:'shop6.jpg'},
+  {id:7, name:'Healthy Picks', rating:4.6, location:'Theni', folder:7, image:'shop7.jpg'},
+  {id:8, name:'Daily Greens', rating:4.6, location:'Dharmapuri', folder:8, image:'shop8.jpg'},
+  {id:9, name:'Super Veggies', rating:4.5, location:'Madurai', folder:9, image:'shop9.jpg'},
+  {id:10, name:'City Market', rating:4.5, location:'Coimbatore', folder:10, image:'shop10.jpg'},
+  {id:11, name:'Value Mart', rating:4.3, location:'Erode', image:'shop11.jpg', baseProductIds:[1,2,3,4,5,6,7,8]},
+  {id:12, name:'Quick Shop', rating:4.3, location:'Villupuram', image:'shop12.jpg', baseProductIds:[5,6,7,8,9,10,11,12]},
+  {id:13, name:'Corner Store', rating:4.2, location:'Kanchipuram', image:'shop13.jpeg', baseProductIds:[9,10,11,12,13,14,15,16]},
+  {id:14, name:'Local Bazaar', rating:4.1, location:'Ariyalur', image:'shop14.jpg', baseProductIds:[1,3,5,7,9,11,13,15]},
+  {id:15, name:'Family Mart', rating:4.0, location:'Thiruvannamalai', image:'shop15.jpg', baseProductIds:[2,4,6,8,10,12,14,16]},
+  {id:16, name:'Sunrise Store', rating:3.9, location:'Puducherry', image:'shop16.png', baseProductIds:[1,2,5,6,9,10,13,14]}
+];
+
+function pickBaseProducts(startIndex, count, existingProducts=[]){
+  const takenNames = new Set(existingProducts.map(p => p.name.toLowerCase()));
+  const picks = [];
+  for(let i=0; i<baseProducts.length * 4 && picks.length < count; i++){
+    const bp = baseProducts[(startIndex + i) % baseProducts.length];
+    if(takenNames.has(bp.name.toLowerCase())) continue;
+    takenNames.add(bp.name.toLowerCase());
+    picks.push(makeBaseProduct(bp));
+  }
+  return picks;
+}
+
+const shops = shopDefinitions.map((shopDef, idx) => {
+  const folderItems = shopDef.folder ? (shopFolderProducts[shopDef.folder] || []).map(makeFolderProduct) : [];
+  const ownedBaseProducts = (shopDef.baseProductIds || []).map(id => {
+    const bp = baseProducts.find(b => b.id === id);
+    return bp ? makeBaseProduct(bp) : null;
+  }).filter(Boolean);
+  const targetCount = shopDef.folder ? 12 : 8;
+  const productsSoFar = folderItems.concat(ownedBaseProducts);
+  const extraNeeded = Math.max(0, targetCount - productsSoFar.length);
+  const extraProducts = extraNeeded ? pickBaseProducts(idx * 5, extraNeeded, productsSoFar) : [];
+  const products = productsSoFar.concat(extraProducts).map(prod => ({
+    ...prod,
+    shopName: shopDef.name,
+    shopLocation: shopDef.location
+  }));
+  return {
+    ...shopDef,
+    img: shopDef.image,
+    products
+  };
+}).sort((a,b)=>b.rating - a.rating);
+
+// Collect ALL unique products (76 total, but only show each product name once)
+const allProductsMap = new Map();
+shops.forEach(shop => {
+  shop.products.forEach(prod => {
+    const key = prod.name.toLowerCase();
+    if(!allProductsMap.has(key)){
+      allProductsMap.set(key, {
+        ...prod,
+        shopName: shop.name,
+        shopLocation: shop.location
+      });
+    }
+  });
+});
+const uniqueProducts = Array.from(allProductsMap.values()).sort((a,b) => a.price - b.price);
+
+// ============ RENDER FUNCTIONS ============
+function getProducedDate(){
+  const d = new Date();
+  d.setDate(d.getDate() - Math.floor(Math.random()*3));
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+}
+
+const escapeSingleQuotes = (value = '') => String(value).replace(/'/g, "\\'");
+
+function renderProductCard(p){
+  const safeName = escapeSingleQuotes(p.name);
+  const safeImg = escapeSingleQuotes(p.img);
+  const safeCategory = escapeSingleQuotes(p.category);
+  const safeExpiry = escapeSingleQuotes(p.expiry);
+  const safeShop = escapeSingleQuotes(p.shopName || 'GreenLink Shop');
+  const safeLocation = escapeSingleQuotes(p.shopLocation || 'Tamil Nadu');
+  return `<div class="product-card" onclick="openProductModal('${safeName}',${p.price},'${safeImg}','${safeCategory}','${safeExpiry}',${p.stock||Math.floor(Math.random()*50)+10},'${safeShop}','${safeLocation}')">
+    <div class="img" style="background-image:url('${p.img}')"></div>
+    <div class="info">
+      <h3>${p.name}</h3>
+      <div class="price">₹${p.price}<span class="unit"> per kg</span></div>
+      <div class="actions"><button onclick="addProductToCart(event, '${safeName}', ${p.price}, '${safeImg}')">Add to Cart</button></div>
+    </div>
+  </div>`;
+}
+
+function renderShopCard(s){
+  const safeName = escapeSingleQuotes(s.name);
+  return `<div class="shop-card" onclick="goToShopPage('${safeName}')">
+    <div class="img" style="background-image:url('${s.img}')"></div>
+    <div class="info">
+      <h3>${s.name}</h3>
+      <div class="rating">
+        <span class="stars">${'★'.repeat(Math.floor(s.rating))}${'☆'.repeat(5-Math.floor(s.rating))}</span>
+        <span class="score">${s.rating}</span>
+      </div>
+      <div class="location">📍 ${s.location}</div>
+      <div class="products-count">${s.products.length} products</div>
+    </div>
+  </div>`;
+}
+
+// ============ BUILD TABS ============
+function buildHome(){
+  // Top 8 products
+  const topProds = [...uniqueProducts].slice(0,8);
+  document.getElementById('topProducts').innerHTML = topProds.map(p => renderProductCard(p)).join('');
+  
+  // Top 8 shops (already sorted by rating - highest first)
+  document.getElementById('topShops').innerHTML = shops.slice(0,8).map(s => renderShopCard(s)).join('');
+}
+
+function buildAllProducts(){
+  // Show all unique products
+  document.getElementById('allProducts').innerHTML = uniqueProducts.map(p => renderProductCard(p)).join('');
+}
+
+function buildAllShops(){
+  // All 16 shops
+  document.getElementById('allShops').innerHTML = shops.map(s => renderShopCard(s)).join('');
+}
+
+function goToShopPage(name){
+  const shop = shops.find(s => s.name === name);
+  if(typeof localStorage !== 'undefined'){
+    try {
+      localStorage.setItem('glc_selected_shop', JSON.stringify(shop || null));
+      localStorage.setItem('glc_shops_cache', JSON.stringify(shops));
+    } catch (err) {
+      console.warn('Unable to cache shop selection', err);
+    }
+  }
+  window.location.href = `shop_products.html?shop=${encodeURIComponent(name)}`;
+}
+
+// ============ TABS NAVIGATION ============
+document.querySelectorAll('.nav-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(tc => {
+      tc.classList.toggle('active', tc.id === 'tab-' + tab.dataset.tab);
+    });
+  });
+});
+
+// ============ SEARCH ============
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const q = e.target.value.toLowerCase().trim();
+  const results = document.getElementById('searchResults');
+  if(!q){
+    results.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">Type to search...</div>';
+    return;
+  }
+  let html = '';
+  uniqueProducts.filter(p => p.name.toLowerCase().includes(q)).slice(0,12).forEach(p => { html += renderProductCard(p); });
+  shops.filter(s => s.name.toLowerCase().includes(q) || s.location.toLowerCase().includes(q)).slice(0,4).forEach(s => { html += renderShopCard(s); });
+  results.innerHTML = html || '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">No results</div>';
+});
+
+// ============ PRODUCT MODAL ============
+let currentProduct = null;
+function openProductModal(name, price, img, category, expiry, stock, shopName, shopLocation){
+  currentProduct = {name, price, img};
+  document.getElementById('modalProductImg').style.backgroundImage = `url('${img}')`;
+  document.getElementById('modalProductName').textContent = name;
+  document.getElementById('modalProductPrice').textContent = `₹${price} per kg`;
+  document.getElementById('modalProducedDate').textContent = getProducedDate();
+  document.getElementById('modalExpiryPeriod').textContent = expiry;
+  document.getElementById('modalCategory').textContent = category;
+  document.getElementById('modalStock').textContent = `${stock} kg`;
+  document.getElementById('modalShopSource').textContent = shopName || 'GreenLink Shop';
+  document.getElementById('modalShopLocation').textContent = shopLocation || 'Tamil Nadu';
+  document.getElementById('productModal').classList.add('show');
+}
+function closeProductModal(){ document.getElementById('productModal').classList.remove('show'); }
+document.getElementById('productModal').addEventListener('click', (e) => { if(e.target.id === 'productModal') closeProductModal(); });
+document.getElementById('modalAddBtn').addEventListener('click', () => {
+  if(currentProduct) addToCart(currentProduct.name, currentProduct.price, currentProduct.img);
+  closeProductModal();
+});
+
+// ============ SHOP MODAL ============
+function openShopModal(shopId){
+  const shop = shops.find(s => s.id === shopId);
+  if(!shop) return;
+  document.getElementById('modalShopImg').src = shop.img;
+  document.getElementById('modalShopName').textContent = shop.name;
+  document.getElementById('modalShopRating').textContent = shop.rating;
+  document.getElementById('modalShopLocation2').textContent = shop.location;
+  document.getElementById('modalProducts').innerHTML = shop.products.map(p => renderProductCard(p)).join('');
+  document.getElementById('shopModal').classList.add('show');
+}
+function closeShopModal(){ document.getElementById('shopModal').classList.remove('show'); }
+document.getElementById('shopModal').addEventListener('click', (e) => { if(e.target.id === 'shopModal') closeShopModal(); });
+
+// ============ CART ============
+function addProductToCart(event, name, price, img){
+  if(event) event.stopPropagation();
+  addToCart(name, price, img);
+}
+async function addToCart(name, price, img){
+  try {
+    const res = await fetch('/api/cart', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      credentials: 'include',
+      body: JSON.stringify({ product: name, farmer: 'Shop', price, image: img || '' })
+    });
+    if(res.ok) alert(`Added ${name} to cart!`);
+  } catch(e){ alert('Added to cart!'); }
+}
+
+// ============ INIT ============
+buildHome();
+buildAllProducts();
+buildAllShops();
+document.getElementById('searchResults').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">Type to search...</div>';
+if(typeof localStorage !== 'undefined'){
+  try {
+    localStorage.setItem('glc_shops_cache', JSON.stringify(shops));
+    localStorage.setItem('glc_unique_products', JSON.stringify(uniqueProducts));
+  } catch (err) {
+    console.warn('Unable to cache shop data', err);
+  }
+}
+</script>
+</body>
+</html>

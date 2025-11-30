@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirecting...</title>
+  <script>
+    // Get the username from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get("username");
+
+    if (username) {
+      localStorage.setItem("username", username);
+      window.location.href = "index1.html";
+    } else {
+      alert("Username missing!");
+    }
+  </script>
+</head>
+<body>
+  Redirecting...
+</body>
+</html>

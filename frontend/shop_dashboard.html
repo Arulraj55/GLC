@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Shop Dashboard</title>
+  <style>
+    :root { --primary:#1565c0; --primary-light:#42a5f5; --bg:#f5f8fc; --surface:#fff; --text:#1a2433; --muted:#5d6b7a; --radius:16px; --shadow:0 4px 20px rgba(0,0,0,.08); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:80px; }
+    header { background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:#fff; padding:24px 20px; text-align:center; }
+    header h1 { font-size:24px; font-weight:700; margin-bottom:4px; }
+    header p { opacity:.9; font-size:14px; }
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; padding:20px; max-width:900px; margin:0 auto; }
+    .metric { background:var(--surface); padding:16px; border-radius:var(--radius); box-shadow:var(--shadow); text-align:center; }
+    .metric h4 { font-size:11px; text-transform:uppercase; color:var(--muted); letter-spacing:.5px; margin-bottom:8px; }
+    .metric .value { font-size:28px; font-weight:700; color:var(--primary); }
+    .section-title { font-size:18px; font-weight:600; padding:20px 20px 12px; max-width:900px; margin:0 auto; }
+    .products-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; padding:0 20px 20px; max-width:900px; margin:0 auto; }
+    @media(max-width:900px){ .products-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+    .product-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; transition:.3s; }
+    .product-card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(0,0,0,.12); }
+    .product-card .img { width:100%; aspect-ratio:1; background:#e3f2fd center/cover no-repeat; }
+    .product-card .info { padding:12px; }
+    .product-card h3 { font-size:14px; font-weight:600; margin-bottom:4px; }
+    .product-card .price { font-size:16px; font-weight:700; color:var(--primary); }
+    .product-card .stock { font-size:12px; color:var(--muted); margin-top:4px; }
+    .product-card .actions { display:flex; gap:8px; margin-top:10px; }
+    .product-card .btn { flex:1; padding:8px; border:none; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:.2s; }
+    .product-card .btn.restock { background:#e8f5e9; color:#2e7d32; }
+    .product-card .btn.remove { background:#ffebee; color:#d32f2f; }
+    .product-card .btn:hover { opacity:.8; }
+    .footer-actions { position:fixed; bottom:0; left:0; right:0; background:var(--surface); padding:14px 20px; display:flex; justify-content:center; gap:16px; box-shadow:0 -2px 20px rgba(0,0,0,.1); }
+    .footer-actions .action-btn { flex:1; max-width:200px; padding:12px; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:.2s; }
+    .footer-actions .action-btn.secondary { background:#e3f2fd; color:var(--primary); }
+    .footer-actions .action-btn.primary { background:var(--primary); color:#fff; }
+    .footer-actions .action-btn:hover { opacity:.85; }
+    .empty-state { grid-column:1/-1; text-align:center; padding:60px 20px; }
+    .empty-state h3 { font-size:20px; margin-bottom:12px; color:var(--muted); }
+    .empty-state p { color:#999; margin-bottom:20px; }
+    .empty-state a { display:inline-block; background:var(--primary); color:#fff; padding:12px 24px; border-radius:10px; text-decoration:none; font-weight:600; }
+    @media(max-width:600px){ .metrics{grid-template-columns:repeat(2,1fr);} }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🏪 Shop Dashboard</h1>
+    <p id="welcomeMsg">Manage your inventory</p>
+  </header>
+  <div class="metrics">
+    <div class="metric"><h4>Total Products</h4><div class="value" id="mTotal">0</div></div>
+    <div class="metric"><h4>In Stock</h4><div class="value" id="mStock">0</div></div>
+    <div class="metric"><h4>Avg Price</h4><div class="value" id="mAvg">₹0</div></div>
+    <div class="metric"><h4>Total Value</h4><div class="value" id="mValue">₹0</div></div>
+  </div>
+  <div class="section-title">My Inventory</div>
+  <div class="products-grid" id="productsGrid"></div>
+  <div class="footer-actions">
+    <button type="button" class="action-btn secondary" onclick="window.location.href='shop_dashboard.html'">Products</button>
+    <button type="button" class="action-btn primary" onclick="window.location.href='buy.html'">Add</button>
+  </div>
+<script>
+let sessionRetries = 0;
+const maxRetries = 3;
+
+async function checkSession() {
+  try {
+    const res = await fetch('/api/session', { credentials: 'include' });
+    const session = await res.json();
+    console.log('Session check:', session);
+    return session;
+  } catch(e) {
+    console.warn('Session check failed:', e);
+    return { loggedIn: false };
+  }
+}
+
+(async function init(){
+  // Wait a moment for session to be ready
+  await new Promise(r => setTimeout(r, 300));
+  
+  let session = await checkSession();
+  
+  // Retry if not logged in (session might not be ready yet)
+  while ((!session.loggedIn || session.role !== 'shop') && sessionRetries < maxRetries) {
+    sessionRetries++;
+    console.log(`Session retry ${sessionRetries}/${maxRetries}...`);
+    await new Promise(r => setTimeout(r, 500));
+    session = await checkSession();
+  }
+  
+  if(!session.loggedIn || session.role !== 'shop'){
+    console.log('Not logged in as shop after retries, redirecting...');
+    window.location.href = 'signin1.html';
+    return;
+  }
+  
+  document.getElementById('welcomeMsg').textContent = `Welcome, ${session.username}!`;
+  await loadProducts();
+})();
+
+async function loadProducts(){
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">Loading...</div>';
+  try {
+    const res = await fetch('/api/shop/products');
+    if(!res.ok) throw new Error('Failed to load');
+    const products = await res.json();
+    if(!products.length){
+      grid.innerHTML = `<div class="empty-state">
+        <h3>No products in inventory</h3>
+        <p>Start buying from farmers to stock your shop!</p>
+        <a href="buy.html">Browse Farmers</a>
+      </div>`;
+      updateMetrics([]);
+      return;
+    }
+    grid.innerHTML = products.map(p => {
+      const img = (p.image||'product1.jpg').replace('frontend/','');
+      return `<div class="product-card">
+        <div class="img" style="background-image:url('${img}')"></div>
+        <div class="info">
+          <h3>${p.name}</h3>
+          <div class="price">${p.price != null ? '₹'+p.price+' per kg' : 'No price'}</div>
+          <div class="stock">Stock: ${p.stock || 0} kg</div>
+        </div>
+      </div>`;
+    }).join('');
+    updateMetrics(products);
+  } catch(e){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#d32f2f;">Failed to load products</div>';
+  }
+}
+
+function updateMetrics(products){
+  document.getElementById('mTotal').textContent = products.length;
+  const inStock = products.filter(p => (p.stock||0) > 0).length;
+  document.getElementById('mStock').textContent = inStock;
+  const priced = products.filter(p => p.price != null);
+  if(priced.length){
+    const avg = (priced.reduce((s,p)=>s+(parseFloat(p.price)||0),0)/priced.length).toFixed(0);
+    document.getElementById('mAvg').textContent = '₹'+avg;
+    const total = products.reduce((s,p)=>(s+(parseFloat(p.price)||0)*(p.stock||0)),0);
+    document.getElementById('mValue').textContent = '₹'+total.toFixed(0);
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GreenLink Shop Products</title>
+  <style>
+    :root { --primary:#1565c0; --primary-dark:#0d47a1; --accent:#ff9800; --bg:#f5f7fa; --surface:#fff; --text:#1a2433; --muted:#5d6b7a; --radius:16px; --shadow:0 4px 20px rgba(0,0,0,.08); }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+    .header { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; padding:24px; text-align:center; position:sticky; top:0; z-index:40; box-shadow:0 6px 20px rgba(0,0,0,.2); }
+    .header .title { font-size:24px; font-weight:700; }
+    .header .subtitle { margin-top:6px; font-size:14px; color:rgba(255,255,255,.85); }
+    main { max-width:1100px; margin:0 auto; padding:30px 20px 80px; }
+    .section-title { font-size:22px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px; color:var(--primary-dark); }
+    .products-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+    .product-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; transition:.25s; }
+    .product-card:hover { transform:translateY(-6px); box-shadow:0 14px 35px rgba(0,0,0,.15); }
+    .product-card .img { width:100%; aspect-ratio:4/3; background:#e3f2fd center/cover no-repeat; }
+    .product-card .info { padding:14px; }
+    .product-card h3 { font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text); }
+    .product-card .price { font-size:18px; font-weight:800; color:var(--primary); }
+    .product-card .unit { font-size:12px; color:var(--muted); font-weight:500; }
+    .product-card .actions { margin-top:12px; }
+    .product-card .actions button { width:100%; padding:9px 12px; border:none; border-radius:10px; background:var(--primary); color:#fff; font-weight:600; font-size:13px; cursor:pointer; transition:.2s; }
+    .product-card .actions button:hover { background:var(--primary-dark); }
+
+    .empty-state { grid-column:1/-1; background:#fff; border-radius:var(--radius); padding:50px 20px; text-align:center; color:var(--muted); box-shadow:var(--shadow); }
+
+    @media(max-width:900px){ .products-grid{grid-template-columns:repeat(3,1fr);} }
+    @media(max-width:600px){ .products-grid{grid-template-columns:repeat(2,1fr);} .header{padding:20px;} main{padding:24px 16px 70px;} }
+
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:200; align-items:center; justify-content:center; }
+    .modal.show { display:flex; }
+    .modal-content { background:var(--surface); width:90%; max-width:460px; border-radius:20px; overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,.25); animation:pop .3s ease; }
+    @keyframes pop { from{transform:scale(.92);opacity:0;} to{transform:scale(1);opacity:1;} }
+    .modal-img { width:100%; aspect-ratio:4/3; background:#e3f2fd center/cover no-repeat; }
+    .modal-body { padding:26px; }
+    .modal-body h2 { font-size:24px; margin-bottom:10px; color:var(--primary); }
+    .modal-body .price-big { font-size:28px; font-weight:800; color:var(--primary); margin-bottom:18px; }
+    .detail-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:22px; }
+    .detail-box { background:#f5f7fa; border-radius:12px; padding:12px; }
+    .detail-box .label { font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:4px; }
+    .detail-box .value { font-size:14px; font-weight:600; color:var(--text); }
+    .modal-actions { display:flex; gap:12px; }
+    .modal-actions button { flex:1; padding:14px; border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; }
+    .modal-actions .close-btn { background:#e0e0e0; color:var(--text); }
+    .modal-actions .add-btn { background:var(--primary); color:#fff; }
+    .modal-actions .add-btn:hover { background:var(--primary-dark); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="title">🏪 GreenLink Shop Showcase</div>
+    <div class="subtitle">Fresh products from your favorite shops</div>
+    <button onclick="location.href='cart.html'" style="position:absolute;right:24px;top:24px;padding:10px 16px;border:none;border-radius:12px;background:rgba(255,255,255,.2);color:#fff;font-weight:600;cursor:pointer;backdrop-filter:blur(6px);">🛒 View Cart</button>
+  </header>
+  <main>
+    <div class="section-title"><span>🥬</span><span>Products from <span id="shop-name">GreenLink Shop</span></span></div>
+    <div class="products-grid" id="product-grid"></div>
+  </main>
+
+  <div class="modal" id="productModal">
+    <div class="modal-content">
+      <div class="modal-img" id="modalImg"></div>
+      <div class="modal-body">
+        <h2 id="modalName"></h2>
+        <div class="price-big" id="modalPrice"></div>
+        <div class="detail-grid">
+          <div class="detail-box"><div class="label">Produced Date</div><div class="value" id="modalProduced"></div></div>
+          <div class="detail-box"><div class="label">Expiry</div><div class="value" id="modalExpiry"></div></div>
+          <div class="detail-box"><div class="label">Category</div><div class="value" id="modalCategory"></div></div>
+          <div class="detail-box"><div class="label">Stock</div><div class="value" id="modalStock"></div></div>
+          <div class="detail-box"><div class="label">Shop</div><div class="value" id="modalShop"></div></div>
+          <div class="detail-box"><div class="label">Location</div><div class="value" id="modalLocation"></div></div>
+        </div>
+        <div class="modal-actions">
+          <button class="close-btn" onclick="closeProductModal()">Close</button>
+          <button class="add-btn" id="modalAddBtn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const clampPrice = (value = 20) => {
+      if(Number.isNaN(value)) return 40;
+      return Math.min(150, Math.max(20, Math.round(value)));
+    };
+
+    const shopNameEl = document.getElementById('shop-name');
+    const grid = document.getElementById('product-grid');
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedShop = urlParams.get('shop');
+
+    const safeParse = (value) => {
+      try { return JSON.parse(value) || null; } catch { return null; }
+    };
+
+    const loadShopsFromCache = () => {
+      if (typeof localStorage === 'undefined') return [];
+      const cached = safeParse(localStorage.getItem('glc_shops_cache')) || [];
+      if (cached.length) return cached;
+      const selected = safeParse(localStorage.getItem('glc_selected_shop'));
+      return selected ? [selected] : [];
+    };
+
+    const shopsData = loadShopsFromCache();
+    const selectedShop = shopsData.find(s => s?.name === requestedShop) || safeParse(localStorage.getItem('glc_selected_shop'));
+
+    const renderProductCard = (product) => {
+      const safeName = (product.name || 'Fresh Produce').replace(/'/g, "\\'");
+      const safeImg = (product.img || 'product1.jpg').replace(/'/g, "\\'");
+      const safeCategory = (product.category || 'Fresh Produce').replace(/'/g, "\\'");
+      const safeExpiry = (product.expiry || '5 days').replace(/'/g, "\\'");
+      const safeShop = (product.shopName || selectedShop?.name || 'GreenLink Shop').replace(/'/g, "\\'");
+      const safeLocation = (product.shopLocation || selectedShop?.location || 'Tamil Nadu').replace(/'/g, "\\'");
+      const stock = product.stock || 80;
+      const price = clampPrice(product.price || 40);
+      return `<div class="product-card" onclick="openProductModal('${safeName}',${price},'${safeImg}','${safeCategory}','${safeExpiry}',${stock},'${safeShop}','${safeLocation}')">
+        <div class="img" style="background-image:url('${safeImg}')"></div>
+        <div class="info">
+          <h3>${product.name}</h3>
+          <div class="price">₹${price}<span class="unit"> per kg</span></div>
+          <div class="actions"><button onclick="addProductToCart(event, '${safeName}', ${price}, '${safeShop}', '${safeImg}')">Add to Cart</button></div>
+        </div>
+      </div>`;
+    };
+
+    const renderProducts = (shop) => {
+      shopNameEl.textContent = shop.name;
+      if (!Array.isArray(shop.products) || !shop.products.length) {
+        grid.innerHTML = `<div class="empty-state">No products listed for ${shop.name}.</div>`;
+        return;
+      }
+      grid.innerHTML = shop.products
+        .map(prod => ({
+          ...prod,
+          price: clampPrice(prod.price),
+          shopName: shop.name,
+          shopLocation: shop.location
+        }))
+        .map(renderProductCard)
+        .join('');
+    };
+
+    if (selectedShop) {
+      renderProducts(selectedShop);
+    } else {
+      shopNameEl.textContent = 'Select a shop from Market';
+      grid.innerHTML = '<div class="empty-state">Please open this page from the GreenLink Shop screen to view shop-specific products.</div>';
+    }
+
+    function openProductModal(name, price, img, category, expiry, stock, shopName, shopLocation){
+      document.getElementById('modalImg').style.backgroundImage = `url('${img}')`;
+      document.getElementById('modalName').textContent = name;
+      document.getElementById('modalPrice').textContent = `₹${price} per kg`;
+      document.getElementById('modalProduced').textContent = getProducedDate();
+      document.getElementById('modalExpiry').textContent = expiry;
+      document.getElementById('modalCategory').textContent = category;
+      document.getElementById('modalStock').textContent = `${stock} kg`;
+      document.getElementById('modalShop').textContent = shopName;
+      document.getElementById('modalLocation').textContent = shopLocation;
+      const modal = document.getElementById('productModal');
+      const addBtn = document.getElementById('modalAddBtn');
+      addBtn.onclick = () => {
+        addToCart(name, shopName, price, img);
+        closeProductModal();
+      };
+      modal.classList.add('show');
+      modal.addEventListener('click', backdropClose);
+    }
+
+    function closeProductModal(){
+      const modal = document.getElementById('productModal');
+      modal.classList.remove('show');
+      modal.removeEventListener('click', backdropClose);
+    }
+
+    function backdropClose(e){
+      if(e.target.id === 'productModal') closeProductModal();
+    }
+
+    function getProducedDate(){
+      const d = new Date();
+      d.setDate(d.getDate() - Math.floor(Math.random()*3));
+      return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    }
+
+    function addProductToCart(evt, name, price, shop, image){
+      if(evt) evt.stopPropagation();
+      addToCart(name, shop, price, image);
+    }
+
+    function addToCart(product, shop, price, image){
+      fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ product, farmer: shop, price, image: image || '' })
+      })
+      .then(res => res.json().catch(() => ({})))
+      .then(data => {
+        alert(data?.success ? `${product} added to cart!` : 'Added to cart!');
+      })
+      .catch(() => alert('Added to cart!'));
+    }
+  </script>
+</body>
+</html>

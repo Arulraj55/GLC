@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop Sign Up</title>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body class="auth-page">
+  <div class="auth-panel">
+    <h2>Shop Registration</h2>
+    
+    <form id="shopSignupForm" class="form">
+      <div class="field"><label>Username</label><input type="text" name="username" required></div>
+      <div class="field"><label>Email</label><input type="email" name="email" required></div>
+      <div class="field"><label>Password</label><input type="password" name="password" required></div>
+      <div class="field"><label>Phone</label><input type="text" name="phone" required></div>
+      <div class="field"><label>City</label><input type="text" name="city" required></div>
+      <button type="submit" class="button full">Sign Up</button>
+      <div class="switch">Have an account? <a href="login1.html">Login</a></div>
+    </form>
+  </div>
+  <script>
+    document.getElementById('shopSignupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const username = form.username.value.trim();
+      const email = form.email.value.trim();
+      const password = form.password.value;
+      const phone = form.phone.value.trim();
+      const city = form.city.value.trim();
+      if (!/^\d{10}$/.test(phone)) { alert('Phone number must be exactly 10 digits'); return; }
+      try {
+        const res = await fetch('/api/shop/signup', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify({ username, email, password, phone, city }) });
+        const data = await res.json();
+        if (res.ok && data.redirect) { window.location.href = data.redirect; } else { alert(data.message || data.error || 'Signup failed'); }
+      } catch { alert('Network error'); }
+    });
+  </script>
+</body>
+</html>

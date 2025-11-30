@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Farmer Sign In</title>
+    <link rel="stylesheet" href="theme.css" />
+</head>
+<body class="auth-page">
+    <div class="auth-panel">
+        <h2>Farmer Login</h2>
+        <form id="signinForm" class="form">
+            <div class="field"><label>Username</label><input type="text" name="username" required /></div>
+            <div class="field"><label>Password</label><input type="password" name="password" required /></div>
+            <button class="button full" type="submit">Login</button>
+            <div class="switch">No account? <a href="signup.html">Register</a></div>
+        </form>
+    </div>
+        <script>
+            const signinForm = document.getElementById('signinForm');
+            signinForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(signinForm);
+                const data = Object.fromEntries(formData.entries());
+
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+                if (result.success && result.redirect) {
+                    window.location.href = result.redirect;
+                } else {
+                    alert(result.error || 'Login failed');
+                }
+            });
+        </script>
+    </body>
+    </html>

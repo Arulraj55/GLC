@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Owner Portal - GreenLink</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1565c0;
+      --primary-dark: #0d47a1;
+      --primary-light: #42a5f5;
+      --accent: #ff9800;
+      --success: #2e7d32;
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --text: #1a2433;
+      --muted: #5d6b7a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    /* Background Pattern */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('GLC6.jpg') center/cover;
+      opacity: 0.15;
+      z-index: 0;
+    }
+    
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      position: relative;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      backdrop-filter: blur(10px);
+    }
+    .logo h1 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .logo span { color: var(--accent); }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .header-btn {
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .header-btn.outline {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.5);
+      color: #fff;
+    }
+    .header-btn.outline:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: #fff;
+    }
+    .header-btn.cart {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-btn.cart:hover {
+      background: #f57c00;
+      transform: scale(1.05);
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+      max-width: 900px;
+      width: 100%;
+    }
+    
+    .action-card {
+      background: var(--surface);
+      border-radius: 24px;
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .action-card:hover {
+      transform: translateY(-15px) scale(1.02);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    }
+    
+    .card-image {
+      height: 220px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .card-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+    }
+    .card-image .badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 5;
+    }
+    
+    .card-icon {
+      position: absolute;
+      bottom: -35px;
+      left: 30px;
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #fff;
+      z-index: 10;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .card-icon.green { background: linear-gradient(135deg, #2e7d32, #4caf50); }
+    .card-icon.blue { background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
+    
+    .card-body {
+      padding: 50px 30px 30px;
+    }
+    .card-body h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .card-body p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 25px;
+    }
+    .card-body ul {
+      list-style: none;
+      margin-bottom: 25px;
+    }
+    .card-body ul li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-body ul li i {
+      color: var(--success);
+      font-size: 12px;
+    }
+    
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .card-btn.green {
+      background: linear-gradient(135deg, #2e7d32, #4caf50);
+      color: #fff;
+    }
+    .card-btn.blue {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #fff;
+    }
+    .card-btn:hover {
+      transform: translateX(5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .card-btn i { transition: transform 0.3s; }
+    .card-btn:hover i { transform: translateX(5px); }
+    
+    /* Welcome Banner */
+    .welcome-banner {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 50px;
+    }
+    .welcome-banner h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .welcome-banner p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+    
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    @media (max-width: 800px) {
+      .cards-container { grid-template-columns: 1fr; max-width: 450px; }
+      .header { padding: 15px 20px; }
+      .header-actions { gap: 8px; }
+      .header-btn { padding: 8px 14px; font-size: 13px; }
+      .welcome-banner h2 { font-size: 28px; }
+    }
+    @media (max-width: 500px) {
+      .logo h1 { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🏪</div>
+      <h1>Green<span>Link</span></h1>
+    </a>
+    <div class="header-actions">
+      <a href="index.html" class="header-btn outline"><i class="fas fa-home"></i> Home</a>
+      <a href="cart.html" class="header-btn cart"><i class="fas fa-shopping-cart"></i> My Cart</a>
+    </div>
+  </header>
+  
+  <main class="main-content">
+    <div class="content-wrapper">
+      <div class="welcome-banner">
+        <h2>Welcome, Shop Owner! 👋</h2>
+        <p>Choose what you'd like to do today</p>
+      </div>
+      
+      <div class="cards-container">
+        <!-- Buy from Farmer -->
+        <a href="buy.html" class="action-card">
+          <div class="card-image" style="background-image: url('GLC2.jpg')">
+            <span class="badge">FRESH PRODUCE</span>
+            <div class="card-icon green">🌾</div>
+          </div>
+          <div class="card-body">
+            <h3>Buy from Farmers</h3>
+            <p>Source fresh, quality produce directly from local farmers at the best prices.</p>
+            <ul>
+              <li><i class="fas fa-check-circle"></i> Browse farm-fresh products</li>
+              <li><i class="fas fa-check-circle"></i> Compare prices from multiple farmers</li>
+              <li><i class="fas fa-check-circle"></i> Get bulk discounts</li>
+              <li><i class="fas fa-check-circle"></i> Direct farm-to-shop delivery</li>
+            </ul>
+            <span class="card-btn green">Shop Now <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </a>
+        
+        <!-- Manage Shop -->
+        <a href="shop_dashboard.html" class="action-card">
+          <div class="card-image" style="background-image: url('GLC3.jpg')">
+            <span class="badge">DASHBOARD</span>
+            <div class="card-icon blue">📊</div>
+          </div>
+          <div class="card-body">
+            <h3>Manage My Shop</h3>
+            <p>View your inventory, track sales, and manage your shop products efficiently.</p>
+            <ul>
+              <li><i class="fas fa-check-circle"></i> View current inventory</li>
+              <li><i class="fas fa-check-circle"></i> Track total stock value</li>
+              <li><i class="fas fa-check-circle"></i> Update product prices</li>
+              <li><i class="fas fa-check-circle"></i> Manage stock levels</li>
+            </ul>
+            <span class="card-btn blue">Open Dashboard <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

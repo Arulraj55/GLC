@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Select Farmer</title>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="header" style="justify-content:center;">
+      <div class="brand">Choose Farmer</div>
+    </header>
+    <main class="main">
+      <h2 class="text-center" style="margin:0 0 1rem;">For <span id="productName"></span></h2>
+      <div class="grid cols-4" id="farmerGrid"></div>
+    </main>
+    <nav class="footer-nav">
+      <a href="index1.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="search.html">Search</a>
+      <a href="cart.html">Cart</a>
+    </nav>
+  </div>
+<script>
+const farmers = [
+  { name:'Raj', img:'farmer1.jpg', rating:4.8, area:'Tambaram', eta:'15–20 mins' },
+  { name:'Meena', img:'farmer2.jpg', rating:4.7, area:'Velachery', eta:'20–25 mins' },
+  { name:'Vikram', img:'farmer3.jpg', rating:4.9, area:'Anna Nagar', eta:'10–15 mins' },
+  { name:'Anjali', img:'farmer4.jpg', rating:4.6, area:'T. Nagar', eta:'25–30 mins' },
+  { name:'Dev', img:'farmer5.jpg', rating:4.5, area:'Guindy', eta:'30–35 mins' },
+  { name:'Sneha', img:'farmer6.jpg', rating:4.4, area:'Mylapore', eta:'18–22 mins' }
+];
+const params = new URLSearchParams(location.search);
+const productName = params.get('product') || '';
+document.getElementById('productName').textContent = productName;
+const grid = document.getElementById('farmerGrid');
+grid.innerHTML = farmers.map(f => `
+  <div class='card'>
+    <div class='media' style="background-image:url('${f.img}')"></div>
+    <div class='content'>
+      <strong>Farmer ${f.name}</strong>
+      <span style='font-size:.7rem; opacity:.7;'>⭐ ${f.rating} • ${f.eta}</span>
+      <span style='font-size:.7rem; opacity:.65;'>📍 ${f.area}</span>
+      <div class='actions'>
+        <button class='button' onclick="addToCart('${productName}','${f.name}')">Buy</button>
+      </div>
+    </div>
+  </div>
+`).join('');
+
+function addToCart(product, farmer){
+  if(!product){ alert('No product selected'); return; }
+  // Random demo price (₹25 - ₹130)
+  const price = Math.round((25 + Math.random()*105) * 2)/2;
+  fetch('/api/cart', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ product, farmer, price })
+  }).then(r=>r.json()).then(d=>{
+    alert(d.success ? `${product} from ${farmer} added (₹${price})` : (d.error||'Failed'));
+  }).catch(()=> alert('Network error'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer's Marketplace</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .farmer-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            gap: 100px; /* Increased space between image and details */
+        }
+        .farmer-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+        }
+        .farmer-details {
+            text-align: left;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            min-width: 250px; /* Keeps it aligned properly */
+        }
+        .contact-btn {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .products {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .product-list {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .product {
+            background: #fff;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            text-align: center;
+            width: 30%;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .product img {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+        }
+        .buy-btn {
+            background: #ff6600;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .buy-btn:hover {
+            background: #cc5500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 Welcome to the Farmer's Marketplace!</h1>
+            <p>Connecting farmers directly with consumers for fresh, organic produce.</p>
+        </header>
+
+        <section class="farmers">
+            <h2>🌾 Meet Our Farmers</h2>
+            <div class="farmer-list" id="farmer-list">
+                <!-- Farmers will be inserted here dynamically -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const farmers = [
+    {
+        name: "John",
+        location: "🏠 Thoothukudi",
+        phone: "📞 8765438920",
+        image: "farmer1/farmer.jpg",
+        products: [
+            { name: "Tomatoes", image: "farmer1/product1.jpg", price: "$2 per kg" },
+            { name: "Potatoes", image: "farmer1/product2.jpg", price: "$1.5 per kg" },
+            { name: "Greens", image: "farmer1/product3.jpg", price: "$1.8 per kg" },
+            { name: "Coriander Leaves", image: "farmer1/product4.jpg", price: "$3 per kg" },
+            { name: "Brinjal", image: "farmer1/product5.jpg", price: "$2.5 per kg" },
+            { name: "Carrot", image: "farmer1/product6.jpg", price: "$1.2 per kg" }
+        ]
+    },
+    {
+        name: "Smith",
+        location: "🏠 Tirunveli",
+        phone: "📞 7678467563",
+        image: "farmer2/farmer.jpg",
+        products: [
+            { name: "Lady's Finger", image: "farmer2/product1.jpg", price: "$1 per kg" },
+            { name: "Ginger", image: "farmer2/product2.jpg", price: "$2.5 per kg" },
+            { name: "Corn", image: "farmer2/product3.jpg", price: "$3 per kg" },
+            { name: "Tomatoes", image: "farmer2/product4.jpg", price: "$1.7 per kg" },
+            { name: "Cabbage", image: "farmer2/product5.jpg", price: "$2.3 per kg" },
+            { name: "Mushroom", image: "farmer2/product6.jpg", price: "$1.5 per kg" }
+        ]
+    },
+    {
+        name: "Charlie",
+        location: "🏠 Trichy",
+        phone: "📞 9812364783",
+        image: "farmer3/farmer.jpg",
+        products: [
+            { name: "Bitterguards", image: "farmer3/product1.jpg", price: "$5 per kg" },
+            { name: "Green Chilies", image: "farmer3/product2.jpg", price: "$6 per kg" },
+            { name: "Onions", image: "farmer3/product3.jpg", price: "$7 per kg" },
+            { name: "Bananas", image: "farmer3/product4.jpg", price: "$5 per kg" },
+            { name: "Lemons", image: "farmer3/product5.jpg", price: "$6 per kg" },
+            { name: "Water Melons", image: "farmer3/product6.jpg", price: "$8 per kg" }
+        ]
+    },
+    {
+        name: "Meenakshi",
+        location: "🏠 Madurai",
+        phone: "📞 9789357347",
+        image: "farmer9/farmer.jpg",
+        products: [
+            { name: "Cauli Flowers", image: "farmer9/product1.jpg", price: "$2 per kg" },
+            { name: "Lemons", image: "farmer9/product2.jpg", price: "$1.5 per kg" },
+            { name: "Raddish", image: "farmer9/product3.jpg", price: "$1.8 per kg" },
+            { name: "Lady's Finger", image: "farmer9/product4.jpg", price: "$3 per kg" },
+            { name: "Garlic", image: "farmer9/product5.jpg", price: "$2.5 per kg" },
+            { name: "Beetroot", image: "farmer9/product6.jpg", price: "$1.2 per kg" }
+        ]
+    },
+    {
+        name: "Periyasami",
+        location: "🏠 Salem",
+        phone: "📞 8486461356",
+        image: "farmer4/farmer.jpg",
+        products: [
+            { name: "Raddish", image: "farmer4/product1.jpg", price: "$1.5 per kg" },
+            { name: "Beetroot", image: "farmer4/product2.jpg", price: "$2 per kg" },
+            { name: "Pumpkin", image: "farmer4/product3.jpg", price: "$2.5 per kg" },
+            { name: "Drum Stick", image: "farmer4/product4.jpg", price: "$3 per kg" },
+            { name: "Scarlet Gourds", image: "farmer4/product5.jpg", price: "$3.5 per kg" },
+            { name: "Wheat", image: "farmer4/product6.jpg", price: "$4 per kg" }
+        ]
+    },
+    {
+        name: "Parvathy",
+        location: "🏠 Coimbatore",
+        phone: "📞 9354434345",
+        image: "farmer10/farmer.jpg",
+        products: [
+            { name: "Brinjal", image: "farmer10/product1.jpg", price: "$3.5 per kg" },
+            { name: "Corn", image: "farmer10/product2.jpg", price: "$2.7 per kg" },
+            { name: "Cabbage", image: "farmer10/product3.jpg", price: "$1.9 per kg" },
+            { name: "Onions", image: "farmer10/product4.jpg", price: "$2.2 per kg" },
+            { name: "Green Chilies", image: "farmer10/product5.jpg", price: "$2 per kg" },
+            { name: "Drum Sticks", image: "farmer10/product6.jpg", price: "$2.4 per kg" }
+        ]
+    },
+    {
+        name: "Muthusami",
+        location: "🏠 Dharmapuri",
+        phone: "📞 9564564565",
+        image: "farmer8/farmer.jpg",
+        products: [
+            { name: "Ginger", image: "farmer8/product1.jpg", price: "$3 per kg" },
+            { name: "Bananas", image: "farmer8/product2.jpg", price: "$2.8 per kg" },
+            { name: "Bitter Guard", image: "farmer8/product3.jpg", price: "$1.5 per kg" },
+            { name: "Potatoes", image: "farmer8/product4.jpg", price: "$2.5 per kg" },
+            { name: "Scarlet Gourds", image: "farmer8/product5.jpg", price: "$4 per kg" },
+            { name: "Onions", image: "farmer8/product6.jpg", price: "$3.8 per kg" }
+        ]
+    },
+    {
+        name: "Chinnasami",
+        location: "🏠 Karur",
+        phone: "📞 8755421664",
+        image: "farmer5/farmer.jpg",
+        products: [
+            { name: "Carrots", image: "farmer5/product1.jpg", price: "$5 per kg" },
+            { name: "potatoes", image: "farmer5/product2.jpg", price: "$6 per kg" },
+            { name: "peas", image: "farmer5/product3.jpg", price: "$7 per kg" },
+            { name: "Watermelons", image: "farmer5/product4.jpg", price: "$3.5 per kg" },
+            { name: "Cabbage", image: "farmer5/product5.jpg", price: "$4.2 per kg" },
+            { name: "Mushroom", image: "farmer5/product6.jpg", price: "$5.5 per kg" }
+        ]
+    },
+    {
+        name: "Naveen",
+        location: "🏠 Chennai",
+        phone: "📞 8456612374",
+        image: "farmer6/farmer.jpg",
+        products: [
+            { name: "Cauli Flower", image: "farmer6/product1.jpg", price: "$8 per kg" },
+            { name: "Coriander Leaves", image: "farmer6/product2.jpg", price: "$9 per kg" },
+            { name: "Corn", image: "farmer6/product3.jpg", price: "$10 per kg" },
+            { name: "Beetroot", image: "farmer6/product4.jpg", price: "$11 per kg" },
+            { name: "Tomatoes", image: "farmer6/product5.jpg", price: "$4 per kg" },
+            { name: "Garlic", image: "farmer6/product6.jpg", price: "$12 per kg" }
+        ]
+    },
+    {
+        name: "Maajida",
+        location: "🏠 Theni",
+        phone: "📞 9154654662",
+        image: "farmer7/farmer.jpg",
+        products: [
+            { name: "Greens", image: "farmer7/product1.jpg", price: "$3 per kg" },
+            { name: "Bananas", image: "farmer7/product2.jpg", price: "$3.5 per kg" },
+            { name: "Pumpkin", image: "farmer7/product3.jpg", price: "$6 per kg" },
+            { name: "Peas", image: "farmer7/product4.jpg", price: "$5 per kg" },
+            { name: "Wheat", image: "farmer7/product5.jpg", price: "$4 per kg" },
+            { name: "Sweet Potato", image: "farmer7/product6.jpg", price: "$2.5 per kg" }
+        ]
+    }
+];
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const farmerList = document.getElementById("farmer-list");
+            farmers.forEach(farmer => {
+                let farmerHtml = `
+                    <div class="farmer-info">
+                        <img src="images/${farmer.image}" alt="${farmer.name}" class="farmer-img">
+                        <div class="farmer-details">
+                            <h2>${farmer.name}</h2>
+                            <p>${farmer.location}</p>
+                            <p>${farmer.phone}</p>
+                            <a href="#" class="contact-btn">Contact Farmer</a>
+                        </div>
+                    </div>
+                    <div class="products">
+                        <h3>${farmer.name}'s Products</h3>
+                        <div class="product-list">
+                            ${farmer.products.map(product => `
+                                <div class="product">
+                                    <img src="images/${product.image}" alt="${product.name}">
+                                    <h4>${product.name}</h4>
+                                    <p>${product.price}</p>
+                                    <a href="checkout.html" class="buy-btn">Buy Now</a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                farmerList.innerHTML += farmerHtml;
+            });
+        });
+    </script>
+</body>
+</html>
