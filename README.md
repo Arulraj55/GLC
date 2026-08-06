@@ -1,4 +1,4 @@
-# GLC (Green Link Chain)
+# GLC (Green Link Commerce)
 
 Node.js + Express + MongoDB app that serves a static frontend (HTML/CSS/JS) from the `frontend/` folder. It includes role-based authentication (farmer/shop/customer) and product/catalog flows backed by MongoDB.
 

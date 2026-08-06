@@ -1,0 +1,60 @@
+/* GreenLink Commerce — shared visual refresh */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+
+:root { --glc-ink:#163126; --glc-green:#177245; --glc-deep:#0c432c; --glc-mint:#dff5e8; --glc-cream:#f8f6f0; --glc-gold:#f2b84b; --glc-border:rgba(22,49,38,.10); --glc-shadow:0 18px 45px rgba(20,62,39,.12); }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { min-height:100vh; font-family:'DM Sans','Segoe UI',sans-serif !important; color:var(--glc-ink) !important; background:radial-gradient(circle at 8% 0%,#e7f8eb 0,transparent 24rem), var(--glc-cream) !important; line-height:1.5; }
+body::before { display:none !important; }
+h1,h2,h3,h4,.title,.header-title { font-family:'Playfair Display',Georgia,serif !important; letter-spacing:-.025em; }
+a { color:var(--glc-green); }
+
+/* Navigation and page framing */
+header,.header { min-height:72px; padding:14px clamp(18px,4vw,52px) !important; background:rgba(255,255,255,.88) !important; border-bottom:1px solid var(--glc-border) !important; box-shadow:0 4px 20px rgba(13,62,37,.06) !important; backdrop-filter:blur(16px); }
+.header { justify-content:space-between !important; }
+.header h1,.header-title,.logo h1 { color:var(--glc-deep) !important; font-size:clamp(1.25rem,2.2vw,1.7rem) !important; }
+.logo,.header a { text-decoration:none; }
+.logo-icon { background:linear-gradient(135deg,var(--glc-green),#54b978) !important; box-shadow:0 8px 18px rgba(23,114,69,.23); }
+.header-actions,.header-left { display:flex; align-items:center; gap:10px; }
+.header-btn,.cart-btn,.back-btn { background:#fff !important; color:var(--glc-deep) !important; border:1px solid var(--glc-border) !important; border-radius:12px !important; box-shadow:0 4px 12px rgba(15,59,36,.07); }
+.header-btn:hover,.cart-btn:hover,.back-btn:hover { color:#fff !important; background:var(--glc-green) !important; transform:translateY(-2px); }
+
+/* Shared cards, grids, media and actions */
+.container,.main,.product-wrapper { width:min(1180px,calc(100% - 32px)) !important; max-width:1180px !important; margin-inline:auto !important; }
+.container,.main { padding-top:30px !important; padding-bottom:110px !important; }
+.product-grid,.products-grid,.farmers-grid,.shops-grid,.shop-grid,.farmer-list,.grid { gap:22px !important; }
+.product-card,.farmer-card,.shop-card,.card,.stat-card,.metric,.order-card,.cart-item,.summary-card,.checkout-modal,.modal-content { background:rgba(255,255,255,.95) !important; color:var(--glc-ink) !important; border:1px solid var(--glc-border) !important; border-radius:18px !important; box-shadow:0 10px 28px rgba(20,62,39,.09) !important; overflow:hidden; }
+.product-card,.farmer-card,.shop-card,.card { transition:transform .25s ease,box-shadow .25s ease !important; }
+.product-card:hover,.farmer-card:hover,.shop-card:hover,.card:hover { transform:translateY(-6px) !important; box-shadow:var(--glc-shadow) !important; }
+.product-card img,.product-image img,.farmer-img img,.card img { object-fit:cover; transition:transform .4s ease; }
+.product-card:hover img,.farmer-card:hover img { transform:scale(1.04); }
+.product-card p,.product-card h3,.product-info,.farmer-details,.farmer-info,.card .content { color:var(--glc-ink) !important; }
+.price,.product-price,.amount { color:var(--glc-green) !important; font-weight:700 !important; }
+.section-title,h2 { color:var(--glc-deep) !important; }
+button,.button,.contact-btn,.add-to-cart,.checkout-btn,.submit-btn,.action-btn { font-family:inherit !important; background:linear-gradient(135deg,var(--glc-green),#29995c) !important; color:#fff !important; border:0 !important; border-radius:11px !important; box-shadow:0 8px 18px rgba(23,114,69,.20) !important; transition:transform .2s ease,filter .2s ease !important; }
+button:hover,.button:hover,.contact-btn:hover,.add-to-cart:hover,.checkout-btn:hover,.submit-btn:hover,.action-btn:hover { transform:translateY(-2px); filter:brightness(1.05); }
+button.secondary,.button.alt,.remove-btn,.delete-btn { background:#fff7e6 !important; color:#975d00 !important; box-shadow:none !important; }
+
+/* Forms and overlays */
+input,select,textarea { font:inherit !important; color:var(--glc-ink) !important; background:#fff !important; border:1px solid #d9e4dc !important; border-radius:10px !important; box-shadow:none !important; }
+input:focus,select:focus,textarea:focus { outline:none !important; border-color:var(--glc-green) !important; box-shadow:0 0 0 4px rgba(23,114,69,.13) !important; }
+.modal,.checkout-overlay { background:rgba(8,42,27,.52) !important; backdrop-filter:blur(6px); }
+.modal-content,.checkout-modal { max-height:90vh; overflow:auto; }
+
+/* Landing / auth */
+.hero { background:linear-gradient(120deg,rgba(8,57,34,.94),rgba(22,114,69,.78)),url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1600') center/cover !important; }
+.hero-content h2 { text-shadow:0 3px 18px rgba(0,0,0,.16); }
+.hero-content h2 span,.logo span { color:#ffd06b !important; }
+.role-card { border-radius:20px !important; box-shadow:0 16px 38px rgba(0,0,0,.17) !important; }
+.role-card h3 { color:var(--glc-deep) !important; }
+.auth-page { background:radial-gradient(circle at 12% 12%,rgba(119,207,145,.34),transparent 26rem),linear-gradient(135deg,#0a3d29,#177245) !important; }
+.auth-panel { background:rgba(255,255,255,.92) !important; color:var(--glc-ink) !important; border:1px solid rgba(255,255,255,.65) !important; box-shadow:0 24px 70px rgba(0,0,0,.25) !important; }
+.auth-panel h2 { background:none !important; color:var(--glc-deep) !important; -webkit-text-fill-color:initial; }
+.auth-panel .switch { color:#496055 !important; }
+.auth-panel .switch a { color:var(--glc-green) !important; }
+
+footer,.footer { background:linear-gradient(125deg,#0c432c,#0a2f20) !important; color:#eef9f0 !important; }
+footer { border-top:1px solid rgba(255,255,255,.1); }
+
+@media (max-width:700px) { header,.header { min-height:62px; padding:10px 16px !important; } .product-grid,.products-grid,.farmers-grid,.shops-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:13px !important; } .product-card img { height:135px !important; } .container,.main,.product-wrapper { width:min(100% - 22px,1180px) !important; } }
+@media (max-width:420px) { .product-grid,.products-grid,.farmers-grid,.shops-grid { grid-template-columns:1fr !important; } }
