@@ -912,12 +912,11 @@ app.get('/api/orders/:orderId', async (req, res) => {
 });
 
 // Catch-all: serve React app for any non-API route (enables React Router on refresh)
-// Express 5 requires (.*) instead of * for wildcard routes
+// Express 5 + path-to-regexp v8 doesn't support * or (.*) in app.get()
+// Use app.use() which accepts any path without regex
 const reactIndexPath = path.join(__dirname, 'react-frontend', 'dist', 'index.html');
-app.get('(.*)', (req, res) => {
-  // Don't intercept API routes
+app.use((req, res) => {
   if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Not found' });
-  // Serve React build if available, else fall back to old HTML frontend
   if (fs.existsSync(reactIndexPath)) {
     return res.sendFile(reactIndexPath);
   }
