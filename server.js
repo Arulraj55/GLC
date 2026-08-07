@@ -60,14 +60,14 @@ app.use(
   })
 );
 
-// Serve static frontend (old HTML pages)
-app.use(express.static(path.join(__dirname, 'frontend')));
-
 // Serve React build (new React frontend) — takes priority for /
 const reactBuildPath = path.join(__dirname, 'react-frontend', 'dist');
 if (fs.existsSync(reactBuildPath)) {
   app.use(express.static(reactBuildPath));
 }
+
+// Serve static frontend (old HTML pages / legacy assets)
+app.use(express.static(path.join(__dirname, 'frontend')));
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'frontend', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
