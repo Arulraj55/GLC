@@ -60,8 +60,14 @@ app.use(
   })
 );
 
-// Serve static frontend
+// Serve static frontend (old HTML pages)
 app.use(express.static(path.join(__dirname, 'frontend')));
+
+// Serve React build (new React frontend) — takes priority for /
+const reactBuildPath = path.join(__dirname, 'react-frontend', 'dist');
+if (fs.existsSync(reactBuildPath)) {
+  app.use(express.static(reactBuildPath));
+}
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'frontend', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
@@ -905,8 +911,15 @@ app.get('/api/orders/:orderId', async (req, res) => {
   }
 });
 
-// Serve index.html for root URL
-app.get('/', (req, res) => {
+// Catch-all: serve React app for any non-API route (enables React Router on refresh)
+const reactIndexPath = path.join(__dirname, 'react-frontend', 'dist', 'index.html');
+app.get('*', (req, res) => {
+  // Don't intercept API routes
+  if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Not found' });
+  // Serve React build if available, else fall back to old HTML frontend
+  if (fs.existsSync(reactIndexPath)) {
+    return res.sendFile(reactIndexPath);
+  }
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 

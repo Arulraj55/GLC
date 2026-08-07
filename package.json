@@ -2,10 +2,12 @@
   "name": "glc-main",
   "version": "1.0.0",
   "description": "",
-  "main": "GLC2.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "cd react-frontend && npm install && npm run build",
+    "dev:react": "npm run dev --prefix react-frontend",
+    "build:react": "npm run build --prefix react-frontend"
   },
   "keywords": [],
   "author": "",
