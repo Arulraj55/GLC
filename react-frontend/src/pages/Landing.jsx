@@ -54,7 +54,7 @@ export default function Landing() {
               justifyContent: 'center', fontSize: 26, backdropFilter: 'blur(6px)',
             }}>🌿</div>
             <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.3px' }}>
-              Green<span style={{ color: '#ffb300' }}>Link</span> Commerce
+              Green<span style={{ color: '#ffb300' }}> Link</span> Commerce <span style={{ fontSize: 13, opacity: 0.8, fontWeight: 600 }}>(GLC)</span>
             </h1>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -96,7 +96,7 @@ export default function Landing() {
             fontSize: 17, maxWidth: 600, lineHeight: 1.75,
             opacity: 0.92, marginBottom: 52, color: '#e8f5e9',
           }}>
-            GreenLink connects farmers, shopkeepers, and customers in one seamless
+            Green Link Commerce (GLC) connects farmers, shopkeepers, and customers in one seamless
             platform — fair prices, zero middlemen, and farm-fresh quality every time.
           </p>
 
@@ -138,7 +138,7 @@ export default function Landing() {
       <section style={{ padding: '80px 20px', background: '#f8faf8' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <p style={{ textAlign: 'center', fontSize: 13, fontWeight: 700, color: '#4caf50', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>
-            WHY GREENLINK
+            WHY GREEN LINK COMMERCE
           </p>
           <h2 style={{ textAlign: 'center', fontSize: 34, fontWeight: 800, marginBottom: 56, color: '#1b5e20', letterSpacing: '-0.5px' }}>
             Built for Everyone in the Chain
@@ -221,7 +221,7 @@ export default function Landing() {
       <footer style={{ background: '#1a2e1a', color: '#fff', padding: '48px 20px 28px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 32 }}>
           <div>
-            <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>🌿 GreenLink Commerce</h3>
+            <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>🌿 Green Link Commerce (GLC)</h3>
             <p style={{ opacity: .65, fontSize: 14, lineHeight: 1.6, maxWidth: 280 }}>Connecting Farmers, Shops &amp; Customers across Tamil Nadu.</p>
           </div>
           <div>
