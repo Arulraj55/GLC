@@ -10,8 +10,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB connection
-const MONGO_URI ='mongodb+srv://arul:UzcKLWbnE03BXf9U@glc-o.nbsvw32.mongodb.net/';
-const DB_NAME ='green_link';
+const MONGO_URI = process.env.MONGO_URI;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const DB_NAME = process.env.DB_NAME || 'green_link';
+
+if (!MONGO_URI) {
+  console.error('ERROR: MONGO_URI environment variable is not set.');
+  process.exit(1);
+}
 
 let db;
 
@@ -47,26 +53,49 @@ function ensureDb(res) {
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// React Static Site -> Express Web Service CORS.
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  if (origin === FRONTEND_URL) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header(
+      'Access-Control-Allow-Methods',
+      'GET,POST,PUT,PATCH,DELETE,OPTIONS'
+    );
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+  }
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+// Render terminates HTTPS at its proxy. Trust it so secure cookies work.
+app.set('trust proxy', 1);
+
 app.use(
   session({
-    secret: 'glc-secret',
-    resave: true,
-    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET || 'change-this-session-secret',
+    resave: false,
+    saveUninitialized: false,
     cookie: {
-      secure: false,
+      secure: true,
       httpOnly: true,
+      sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
   })
 );
 
-// Serve React build (new React frontend) — takes priority for /
-const reactBuildPath = path.join(__dirname, 'react-frontend', 'dist');
-if (fs.existsSync(reactBuildPath)) {
-  app.use(express.static(reactBuildPath));
-}
-
-// Serve static frontend (old HTML pages / legacy assets)
+// Serve static frontend
 app.use(express.static(path.join(__dirname, 'frontend')));
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'frontend', 'uploads');
@@ -911,15 +940,8 @@ app.get('/api/orders/:orderId', async (req, res) => {
   }
 });
 
-// Catch-all: serve React app for any non-API route (enables React Router on refresh)
-// Express 5 + path-to-regexp v8 doesn't support * or (.*) in app.get()
-// Use app.use() which accepts any path without regex
-const reactIndexPath = path.join(__dirname, 'react-frontend', 'dist', 'index.html');
-app.use((req, res) => {
-  if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Not found' });
-  if (fs.existsSync(reactIndexPath)) {
-    return res.sendFile(reactIndexPath);
-  }
+// Serve index.html for root URL
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
 

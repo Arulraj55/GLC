@@ -1,0 +1,114 @@
+GLC deployment files for React Static Site + Render Web Service
+
+WHERE EACH FILE GOES
+====================
+
+1) server.js
+Replace:
+GLC/server.js
+
+2) api.js
+Replace:
+GLC/react-frontend/src/api.js
+
+3) .env.example
+Put it here:
+GLC/.env.example
+
+For Render, DO NOT upload/use this file as your production secret store.
+Instead create the same variables in:
+Render -> Web Service -> Environment
+
+4) SETUP.txt
+You can put this anywhere. It is ONLY an instruction file.
+Recommended:
+GLC/SETUP.txt
+
+5) .gitignore
+Replace/add:
+GLC/.gitignore
+
+IMPORTANT
+=========
+Do NOT put server.js inside react-frontend.
+Do NOT put SETUP.txt inside react-frontend/public.
+Do NOT put the real MongoDB password in GitHub.
+
+RENDER WEB SERVICE
+==================
+Keep the existing Web Service.
+
+Root directory:
+GLC
+
+Build command:
+npm install
+
+Start command:
+npm start
+
+Environment variables:
+MONGO_URI = your real MongoDB connection string
+DB_NAME = green_link
+SESSION_SECRET = a long random secret
+FRONTEND_URL = your exact React Static Site URL
+
+Example:
+FRONTEND_URL=https://glc-react.onrender.com
+
+RENDER STATIC SITE
+==================
+Use the same GitHub repository.
+
+Root directory:
+GLC/react-frontend
+
+Build command:
+npm install && npm run build
+
+Publish directory:
+dist
+
+Replace src/api.js with the file in this ZIP.
+
+IMPORTANT:
+If your backend URL is not https://glc-1.onrender.com,
+change BACKEND in src/api.js.
+
+ROBOTS AND SITEMAP
+==================
+Keep these existing files:
+GLC/react-frontend/public/robots.txt
+GLC/react-frontend/public/sitemap.xml
+
+Edit robots.txt so Sitemap points to your React Static Site:
+
+User-agent: *
+Allow: /
+
+Sitemap: https://YOUR-REACT-STATIC-SITE.onrender.com/sitemap.xml
+
+After deployment, check:
+https://YOUR-REACT-STATIC-SITE.onrender.com/robots.txt
+https://YOUR-REACT-STATIC-SITE.onrender.com/sitemap.xml
+
+SECURITY
+========
+The original server.js contained a MongoDB password directly in the source.
+The new server.js uses MONGO_URI from the environment instead.
+
+If the old MongoDB password was ever pushed to GitHub, CHANGE THAT PASSWORD
+in MongoDB Atlas immediately.
+
+AFTER DEPLOYMENT
+================
+1. Deploy the Web Service.
+2. Deploy the React Static Site.
+3. Open the React Static Site.
+4. Test login/signup.
+5. Test cart/orders/products.
+6. Confirm API requests go to https://glc-1.onrender.com/api/...
+7. Search Console -> URL Inspection -> Test Live URL.
+8. Confirm Crawl allowed = Yes.
+9. Confirm Page fetch = Successful.
+10. Then Request Indexing.

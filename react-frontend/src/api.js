@@ -1,9 +1,11 @@
-// Backend base URL - used ONLY for static images
-// All /api calls use relative paths so Vite proxy handles them (no CORS issue)
+// Backend Render Web Service URL.
 export const BACKEND = 'https://glc-1.onrender.com';
 
 const base = (path, opts = {}) =>
-  fetch(path, { credentials: 'include', ...opts });
+  fetch(`${BACKEND}${path}`, {
+    credentials: 'include',
+    ...opts,
+  });
 
 export const api = {
   session:        () => base('/api/session').then(r => r.json()),
@@ -39,11 +41,6 @@ export const api = {
   },
 };
 
-/**
- * Resolve any image path to a full URL.
- * - Strips "frontend/" prefix the backend sometimes stores
- * - Prefixes BACKEND so images load from the render server
- */
 export function img(path) {
   if (!path) return `${BACKEND}/product1.jpg`;
   if (path.startsWith('http')) return path;
