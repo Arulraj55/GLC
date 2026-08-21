@@ -11,11 +11,10 @@ const PORT = process.env.PORT || 3000;
 
 // MongoDB connection
 const MONGO_URI = process.env.MONGO_URI;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 const DB_NAME = process.env.DB_NAME || 'green_link';
 
 if (!MONGO_URI) {
-  console.error('ERROR: MONGO_URI environment variable is not set.');
+  console.error('MONGO_URI environment variable is not set.');
   process.exit(1);
 }
 
@@ -50,22 +49,26 @@ function ensureDb(res) {
   return true;
 }
 
-// Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// CORS: allow the React Static Site to call this Web Service.
+const configuredOrigins = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
 
-// React Static Site -> Express Web Service CORS.
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
-  if (origin === FRONTEND_URL) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header(
-      'Access-Control-Allow-Methods',
-      'GET,POST,PUT,PATCH,DELETE,OPTIONS'
-    );
-    res.header(
+  // If FRONTEND_URL is configured, allow only those origins.
+  // If it is not configured yet, echo the request origin so the app can
+  // still be tested; set FRONTEND_URL in Render before production use.
+  const allowed = !configuredOrigins.length || (origin && configuredOrigins.includes(origin));
+
+  if (origin && allowed) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    res.setHeader(
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     );
@@ -78,7 +81,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Render terminates HTTPS at its proxy. Trust it so secure cookies work.
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 
 app.use(
@@ -938,6 +943,14 @@ app.get('/api/orders/:orderId', async (req, res) => {
     console.error('Get order error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+// Simple health check for Render/browser testing.
+app.get('/api/health', (req, res) => {
+  res.json({
+    ok: true,
+    databaseConnected: !!db
+  });
 });
 
 // Serve index.html for root URL

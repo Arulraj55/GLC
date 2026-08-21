@@ -1,4 +1,4 @@
-// Backend Render Web Service URL.
+// Existing Render Web Service that runs server.js.
 export const BACKEND = 'https://glc-1.onrender.com';
 
 const base = (path, opts = {}) =>
@@ -41,6 +41,11 @@ export const api = {
   },
 };
 
+/**
+ * Resolve any image path to a full URL.
+ * - Strips "frontend/" prefix the backend sometimes stores
+ * - Prefixes BACKEND so images load from the render server
+ */
 export function img(path) {
   if (!path) return `${BACKEND}/product1.jpg`;
   if (path.startsWith('http')) return path;
