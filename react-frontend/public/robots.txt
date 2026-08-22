@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://glc-1.onrender.com/sitemap.xml
+Sitemap: https://glc-umnk.onrender.com/sitemap.xml
