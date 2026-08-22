@@ -100,8 +100,16 @@ app.use(
   })
 );
 
-// Serve static frontend
-app.use(express.static(path.join(__dirname, 'frontend')));
+// Serve the React production build first.
+// Vite builds react-frontend into react-frontend/dist.
+const reactDistDir = path.join(__dirname, 'react-frontend', 'dist');
+app.use(express.static(reactDistDir));
+
+// Keep the existing frontend directory available for legacy/static assets
+// such as product images and farmer/shop image folders used by the API.
+const legacyFrontendDir = path.join(__dirname, 'frontend');
+app.use(express.static(legacyFrontendDir));
+
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'frontend', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
@@ -175,7 +183,7 @@ app.post('/api/signup', async (req, res) => {
     req.session.username = username;
     req.session.save((err) => {
       if (err) console.error('Session save error:', err);
-      return res.json({ success: true, redirect: '/farmer_dashboard.html' });
+      return res.json({ success: true, redirect: '/farmer-dashboard' });
     });
   } catch (err) {
     console.error('Signup error:', err);
@@ -212,7 +220,7 @@ app.post('/api/login', async (req, res) => {
         console.error('Session save error:', err);
         return res.status(500).json({ error: 'Session save failed' });
       }
-      return res.json({ success: true, redirect: '/farmer_dashboard.html' });
+      return res.json({ success: true, redirect: '/farmer-dashboard' });
     });
   } catch (err) {
     console.error('Login error:', err);
@@ -483,7 +491,7 @@ app.post('/api/shop/signup', async (req, res) => {
     console.log('[SHOP SIGNUP] created user:', username);
 
     req.session.shopUsername = username;
-    return res.json({ success: true, redirect: '/login1.html' });
+    return res.json({ success: true, redirect: '/shop-browse' });
   } catch (err) {
     console.error('Shop signup error:', err);
     return res.status(500).json({ error: 'Internal server error' });
@@ -522,7 +530,7 @@ app.post('/api/shop/login', async (req, res) => {
         console.error('Session save error:', err);
         return res.status(500).json({ error: 'Session save failed' });
       }
-      return res.json({ success: true, redirect: '/login1.html' });
+      return res.json({ success: true, redirect: '/shop-browse' });
     });
   } catch (err) {
     console.error('Shop login error:', err);
@@ -579,7 +587,7 @@ app.post('/api/customer/signup', async (req, res) => {
     });
 
     req.session.customerUsername = username;
-    return res.json({ success: true, redirect: '/index1.html' });
+    return res.json({ success: true, redirect: '/market' });
   } catch (err) {
     console.error('Customer signup error:', err);
     return res.status(500).json({ error: 'Internal server error' });
@@ -614,7 +622,7 @@ app.post('/api/customer/login', async (req, res) => {
         console.error('Session save error:', err);
         return res.status(500).json({ error: 'Session save failed' });
       }
-      return res.json({ success: true, redirect: '/index1.html' });
+      return res.json({ success: true, redirect: '/market' });
     });
   } catch (err) {
     console.error('Customer login error:', err);
@@ -953,9 +961,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve index.html for root URL
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+// React Router fallback.
+// Static files are served above, while API routes are never redirected to React.
+// This makes direct visits/refreshes such as /market, /cart, /checkout,
+// /farmer-dashboard, and /shop-dashboard work in production.
+app.get(/^(?!\/api(?:\/|$)).*/, (req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  res.sendFile(path.join(reactDistDir, 'index.html'), (err) => {
+    if (err) next(err);
+  });
 });
 
 app.listen(PORT, () => {
